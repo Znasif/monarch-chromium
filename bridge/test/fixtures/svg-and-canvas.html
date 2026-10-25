@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SVG and Canvas2D Geometry Capture Fixture</title>
+</head>
+<body>
+  <!-- 1. Inline SVG with viewBox, transforms, switch systemLanguage, and labeled components -->
+  <svg id="heart-svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="svg-main-title">
+    <title id="svg-main-title">Schematic diagram of the four heart chambers</title>
+    <desc>Vector diagram showing right and left atria and ventricles.</desc>
+    <g id="pericardium" aria-label="Pericardium">
+      <rect x="20" y="30" width="160" height="150" rx="12" ry="12" fill="none" stroke="black" stroke-width="2"/>
+    </g>
+    <g id="chambers" transform="translate(10, 10)">
+      <path id="right-atrium" aria-label="Right atrium" d="M 20 30 L 80 30 L 80 80 L 20 80 Z" fill="none" stroke="black"/>
+      <circle id="left-atrium" aria-label="Left atrium" cx="135" cy="55" r="25" fill="none" stroke="black"/>
+      <polygon id="right-ventricle" aria-label="Right ventricle" points="20,90 80,90 80,155 40,155" fill="none" stroke="black"/>
+      <ellipse id="left-ventricle" aria-label="Left ventricle" cx="135" cy="125" rx="30" ry="32" fill="none" stroke="black"/>
+    </g>
+    <line id="septum" aria-label="Septum" x1="95" y1="40" x2="95" y2="165" stroke="black"/>
+    <switch>
+      <text systemLanguage="de" x="30" y="25">Herz</text>
+      <text systemLanguage="en" x="30" y="25">Heart</text>
+    </switch>
+  </svg>
+
+  <!-- 2. Canvas2D drawn at document load (intercepted by bridge.js installed at document start) -->
+  <canvas id="comic-canvas" width="400" height="200" aria-label="Four-panel comic canvas"></canvas>
+
+  <!-- 3. ARIA role="img" element -->
+  <div id="aria-triangle" role="img" aria-label="Warning symbol: equilateral triangle" style="width:48px;height:48px;">&#9650;</div>
+
+  <script>
+    const canvas = document.getElementById('comic-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // First draw a scratch line and clear the entire canvas to verify clearRect resets log
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(400, 200);
+    ctx.stroke();
+    ctx.clearRect(0, 0, 400, 200);
+
+    // Full-canvas background fillRect (must NOT become a shape stroke)
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 400, 200);
+
+    // Panel 1 border via strokeRect
+    ctx.strokeStyle = '#000000';
+    ctx.strokeRect(10, 10, 175, 180);
+
+    // Panel 2 border via save/translate/rect/stroke/restore
+    ctx.save();
+    ctx.translate(205, 10);
+    ctx.beginPath();
+    ctx.rect(0, 0, 185, 180);
+    ctx.stroke();
+    ctx.restore();
+
+    // Stick figure head (arc) and body (moveTo/lineTo/quadraticCurveTo)
+    ctx.beginPath();
+    ctx.arc(60, 60, 15, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(60, 75);
+    ctx.lineTo(60, 130);
+    ctx.quadraticCurveTo(75, 145, 90, 160);
+    ctx.stroke();
+
+    // Dialogue text (must be captured as role="text" with embeddedText, no strokes)
+    ctx.fillStyle = '#000000';
+    ctx.fillText("Did you really name your son Robert'); DROP TABLE Students;-- ?", 215, 40);
+  </script>
+</body>
+</html>
