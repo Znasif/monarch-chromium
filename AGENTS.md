@@ -38,3 +38,21 @@ This file captures our hackathon engineering patterns, Gemini API rules, and cri
    - Require 3 consecutive empty polls before declaring lift, and clamp step distance (`squaredDistance <= 36` when two hands seen, `<= 400` for one hand).
    - Subtract `3` from `pointX` in `onSingleTapAtBraillePosition` / `onDoubleTapAtBraillePosition` to compensate for fingertip width.
    - Trigger `VibrationUtils.startVibration(context, 30)` when the tracked finger enters a new component, and `SoundUtils.errorBeep(context)` when hitting a viewport or `Data Navigator` boundary.
+
+---
+
+## 3. Managed-Agent Linux Sandbox Build & Proxy Rules (Pattern 5)
+
+1. **Preserving the Sandbox `mitmproxy` CA Certificate When Installing OpenJDK**:
+   - Each step starts in a fresh Ubuntu 24.04 container without Java pre-installed. The sandbox routes outbound HTTPS traffic through `http://10.100.0.1:8081` and uses a `mitmproxy` CA certificate for `github.com` and `api.github.com`.
+   - **Critical quirk**: Running `apt-get install -y --no-install-recommends openjdk-21-jdk-headless` triggers `update-ca-certificates`, which regenerates `/etc/ssl/certs/ca-certificates.crt` from `/usr/local/share/ca-certificates/` and **wipes out** the pre-baked `mitmproxy` cert unless it is saved to `/usr/local/share/ca-certificates/mitmproxy.crt` first. Without this, `git push`, `curl https://api.github.com`, and Gradle wrapper downloads (which redirect from `services.gradle.org` to `github.com`) will fail with TLS certificate errors.
+   - Always run this exact sequence before using Java/Gradle in a fresh sandbox:
+     ```bash
+     openssl s_client -proxy 10.100.0.1:8081 -connect github.com:443 -showcerts </dev/null 2>/dev/null \
+       | awk '/BEGIN CERTIFICATE/{i++} i==2{print}' > /usr/local/share/ca-certificates/mitmproxy.crt
+     apt-get update -qq && apt-get install -y --no-install-recommends openjdk-21-jdk-headless
+     update-ca-certificates
+     export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=10.100.0.1 -Dhttp.proxyPort=8081 -Dhttps.proxyHost=10.100.0.1 -Dhttps.proxyPort=8081"
+     ```
+2. **JVM Proxy Flags (`JAVA_TOOL_OPTIONS`)**:
+   - Java's `HttpURLConnection` (used by `gradle-wrapper.jar`) ignores `HTTP_PROXY` / `HTTPS_PROXY` environment variables. Always export `JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=10.100.0.1 -Dhttp.proxyPort=8081 -Dhttps.proxyHost=10.100.0.1 -Dhttps.proxyPort=8081"` (or configure `systemProp.http.proxyHost` / `systemProp.https.proxyHost` in `gradle.properties`).
