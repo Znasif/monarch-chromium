@@ -48,7 +48,7 @@
       652
     ],
     "coordinateSpace": "pixels of the original SVG rendered at its own width/height [x0, y0, x1, y1]; tolerance 25 px",
-    "vectorPath": "the page shows a 250 px PNG thumbnail of an SVG; see openQuestions[0]",
+    "vectorPath": "the page shows a 250 px PNG thumbnail; shapes come from the multimodal model's structured tactile graphic (LONG_TERM_PLAN §9), not from the file page",
     "overview1x": {
       "fit": "about 35 rows tall, centered, about 36 pins wide",
       "maxFill": 0.25,
@@ -57,13 +57,15 @@
         "septum between left and right ventricles as one line",
         "the four chambers as closed regions separated by walls",
         "vessels as tube outlines leaving the top: superior vena cava, aorta arch, pulmonary artery; inferior vena cava at the bottom",
-        "pulmonary veins as short tube stubs on both sides"
+        "pulmonary veins as short tube stubs on both sides",
+        "every region is an outline only, no fill or texture inside"
       ],
       "drop": [
         "all label text and dotted leader lines (labels go to components and the caption rows)",
         "white blood-flow arrows",
         "shading and color gradients (no pins for color)",
-        "chordae tendineae (thin white strands) at 1x"
+        "chordae tendineae (thin white strands) at 1x",
+        "colour meaning as texture: never; blue (oxygen-poor) and red (oxygen-rich) are named in labels only"
       ],
       "language": "the SVG holds every label in 5 languages inside <switch systemLanguage>; only the user's language (English) is used",
       "deviceCheck": "By touch: find the aorta arch at the top and follow it down into the heart."
@@ -272,9 +274,5 @@
         "expect": "the path stays attached to the chambers it crosses and survives zoom and reopen"
       }
     ]
-  },
-  "openQuestions": [
-    "Vector source: the page has only a PNG thumbnail; the original SVG is on the file's page. Rule options: (a) use the largest srcset image and raster contours, (b) follow the image's link to a same-site file page and use an SVG if one is offered there. (b) gives exact shapes but needs a general rule, not a Wikipedia rule.",
-    "Colour meaning: blue = oxygen-poor, red = oxygen-rich. Show it with a sparse dot texture on one group (costs fill), or only in labels?"
-  ]
+  }
 }
