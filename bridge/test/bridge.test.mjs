@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -20,7 +21,8 @@ const BROWSER_TARGETS = [
     name: 'chromium',
     launch: () =>
       chromium.launch({
-        executablePath: '/usr/bin/google-chrome',
+        // The agent sandbox has system Chrome; elsewhere use Playwright's bundled Chromium.
+        executablePath: process.env.CHROME_PATH || (existsSync('/usr/bin/google-chrome') ? '/usr/bin/google-chrome' : undefined),
         args: ['--no-sandbox', '--disable-dev-shm-usage']
       })
   },
