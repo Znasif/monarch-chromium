@@ -21,3 +21,13 @@ and after every green test run. Never push to main. Never force-push.
 GitHub: pushes to https://github.com/Znasif/monarch-chromium.git and REST calls to
 https://api.github.com are authenticated automatically by the network proxy. Do not
 look for or print tokens.
+
+After checking out your branch, merge origin/main into it (a normal merge, no
+rebase) so you have the latest plan, prompts and test cases. Push the merge.
+
+Test cases: test-sites/cases/*.json describe real pages and the expected Text View,
+tactile graphics, components, navigation and editing behaviour. The page snapshots
+are NOT in the repo (licensing). Do not fetch those sites. Build small synthetic
+fixtures that mimic each case (for xkcd-327: a 666x205 line drawing with 4 panel
+rectangles at the listed boxes, figures and lettering) and test against the
+expectations that apply to your step.
