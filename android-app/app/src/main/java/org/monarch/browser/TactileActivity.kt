@@ -274,7 +274,8 @@ class TactileActivity : AppCompatActivity() {
     private fun onKey(keyCode: Int): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_NUM_LOCK -> { setSighted(sighted.visibility != android.view.View.VISIBLE); true }
-            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> { enter(); true }
+            KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER,
+            KeyEvent.KEYCODE_SPACE -> { enter(); true }  // KeySoft keeps Enter from a USB keyboard; Space gets through
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> { if (!back()) finish(); true }
             KeyEvent.KEYCODE_ZOOM_IN, KeyEvent.KEYCODE_PLUS, KeyEvent.KEYCODE_EQUALS -> { zoomIn(); true }
             KeyEvent.KEYCODE_ZOOM_OUT, KeyEvent.KEYCODE_MINUS -> { if (!back()) beep(); true }

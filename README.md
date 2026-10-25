@@ -81,7 +81,7 @@ Single keys only for now; no chord is needed. Every key press is logged
 | Finger + double-press the Action button | none | Open the part under the finger at the current level: on the whole image, the panel or figure the finger is in; inside it, the part under the finger. A part with nothing inside is read out (label, description, text). |
 | Left D-Pad left or up, or Pan Up | ← or ↑, Page Up | Previous part at the same level |
 | Left D-Pad right or down, or Pan Down | → or ↓, Page Down | Next part at the same level |
-| Enter (dot 8) | Enter | Open the selected part (the one last touched or stepped to) |
+| Enter (dot 8) or Space | Space (Enter is kept by KeySoft) | Open the selected part (the one last touched or stepped to) |
 | Back (triangle) | Esc | Out one level; from the whole image, back to the web page |
 | Zoom + (oval, bottom right) | `+` or `=` | Zoom 2× on the selected part |
 | Zoom − (oval, bottom left) | `-` | Zoom out one step (same as Back while zoomed) |
