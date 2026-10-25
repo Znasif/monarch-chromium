@@ -27,9 +27,12 @@ object PendingImage {
 }
 
 /**
- * Full-screen tactile viewer: draws the structured graphic on the pins, reads the part
- * under the finger, and navigates the component tree (D-pad moves between siblings,
- * Enter goes into a part, Back comes out, Zoom keys zoom on the focused part).
+ * Full-screen tactile viewer. The canvas never changes while you feel it; only speech
+ * and the Braille caption follow the finger. Inputs are the ones that reach an app on
+ * the Monarch (MonarchTempest docs/PHASE0-HARDWARE-FINDINGS.md):
+ *  - finger + double-press of the Action button: select the part under the finger;
+ *    the same again on the selected part opens it
+ *  - D-pad up/down, Pan up/down: previous/next part; Enter (dot 8): open; Back: out
  */
 class TactileActivity : AppCompatActivity() {
     private lateinit var manager: SelfBraillingManager
@@ -53,10 +56,17 @@ class TactileActivity : AppCompatActivity() {
         widget.onSelfBraillingWidgetListener = object : SelfBraillingWidget.OnSelfBraillingWidgetListener {
             override fun onFocused() = show()
             override fun onSingleTapAtBraillePosition(pointX: Int, pointY: Int) {
-                partAt(pointX, pointY)?.let { focus(it) }
+                Log.d(TAG, "single tap $pointX,$pointY (ignored)")
             }
             override fun onDoubleTapAtBraillePosition(pointX: Int, pointY: Int) {
-                partAt(pointX, pointY)?.let { focus(it, speak = false); enter() }
+                // KeySoft reports the point 3 pins right of the fingertip.
+                val id = partAt(pointX + FINGER_X_CORRECTION, pointY)
+                Log.d(TAG, "action double-press $pointX,$pointY -> $id")
+                when {
+                    id == null -> beep()
+                    id == focusId -> enter()
+                    else -> focus(id)
+                }
             }
         }
 
@@ -115,9 +125,12 @@ class TactileActivity : AppCompatActivity() {
             if (point != null) {
                 val id = partAt(point.x, point.y) ?: 0
                 if (id != 0 && id != touchedId) {
+                    Log.d(TAG, "touch ${point.x},${point.y} -> $id")
                     touchedId = id
                     vibrate()
-                    say(spoken(id), captionText = labelOf(id))
+                    say(spoken(id))
+                    handler.removeCallbacks(captionUpdate)
+                    handler.postDelayed(captionUpdate, CAPTION_DELAY_MS)
                 }
             } else {
                 touchedId = 0
@@ -125,6 +138,9 @@ class TactileActivity : AppCompatActivity() {
             handler.postDelayed(this, POLL_MS)
         }
     }
+
+    /** The caption follows the finger once it rests, so the pins are not resent on every move. */
+    private val captionUpdate = Runnable { if (touchedId != 0) setCaption(labelOf(touchedId)) }
 
     private fun partAt(x: Int, y: Int): Int? = hits?.lookup(x, y)?.takeIf { graphic?.partOf(it) != null }
 
@@ -172,8 +188,6 @@ class TactileActivity : AppCompatActivity() {
         val direction = when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> Direction.LEFT
             KeyEvent.KEYCODE_DPAD_RIGHT -> Direction.RIGHT
-            KeyEvent.KEYCODE_DPAD_UP -> Direction.UP
-            KeyEvent.KEYCODE_DPAD_DOWN -> Direction.DOWN
             else -> null
         }
         if (direction != null) {
@@ -182,12 +196,23 @@ class TactileActivity : AppCompatActivity() {
             return true
         }
         return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> { stepSibling(-1); true }
+            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> { stepSibling(1); true }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> { enter(); true }
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> { if (!back()) finish(); true }
             KeyEvent.KEYCODE_ZOOM_IN, KeyEvent.KEYCODE_PLUS, KeyEvent.KEYCODE_EQUALS -> { zoomIn(); true }
             KeyEvent.KEYCODE_ZOOM_OUT, KeyEvent.KEYCODE_MINUS -> { if (!back()) beep(); true }
             else -> super.onKeyDown(keyCode, event)
         }
+    }
+
+    /** Previous/next part among the focused part's siblings, in reading order. */
+    private fun stepSibling(delta: Int) {
+        val g = graph ?: return
+        val parent = scene?.componentById(focusId)?.parentId
+        val siblings = if (parent == null) g.rootIds else g.orderedChildrenOf(parent)
+        val next = siblings.getOrNull(siblings.indexOf(focusId) + delta)
+        if (next == null) beep() else focus(next)
     }
 
     private fun labelOf(id: Int) = graphic?.partOf(id)?.label ?: ""
@@ -203,8 +228,13 @@ class TactileActivity : AppCompatActivity() {
     }
 
     private fun say(text: String, captionText: String = caption) {
-        if (captionText != caption) { caption = captionText; show() }
+        setCaption(captionText)
         widget.announceForAccessibility(text)
+    }
+
+    /** Only the caption rows differ, so the canvas pins stay as they are. */
+    private fun setCaption(text: String) {
+        if (text != caption) { caption = text; show() }
     }
 
     private fun vibrate() {
@@ -233,5 +263,7 @@ class TactileActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MonarchTactile"
         private const val POLL_MS = 40L
+        private const val CAPTION_DELAY_MS = 600L
+        private const val FINGER_X_CORRECTION = -3
     }
 }
