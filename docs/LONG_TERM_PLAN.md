@@ -164,3 +164,43 @@ Mounted under `/workspace/ref/` by `scripts/agent.py`, not committed:
   a past decision; do not read it end to end.
 - `skills/gemini-api-dev.md`, `skills/gemini-omni-flash-api.md` — official Gemini
   API skills (current model IDs and SDK usage).
+
+## 9. Human decisions (2026-10-25)
+
+1. **Colour is never a texture.** Regions are outlines only; no fill or dot texture
+   inside shapes. Colour meaning (e.g. oxygen-rich vs oxygen-poor) goes into labels.
+2. **Shapes for any raster image come from a multimodal model, for any site.** Send
+   a low-resolution copy of the image (longest side 768 px) to `gemini-4-argon`
+   (`thinking_level: "low"`; benchmark `gemini-3.8-flash` for latency) and get back
+   a structured tactile graphic (schema below). Our renderer draws it as 1-pin lines.
+   No site-specific rules (no following file-page links, no URL patterns). Inline
+   `<svg>` and Canvas2D geometry in the page are still used directly. The local
+   raster contour compiler is the offline / Exam Mode fallback only.
+3. **Testing:** ground truth is the human-reviewed case files in
+   `test-sites/cases/`. `test-sites/judge.py` runs exact checks (fill, box IoU,
+   counts) and asks `claude-sonnet-5-5` to grade the rest within the stated
+   tolerances, using the source image and a picture of the generated pins. Judge
+   runs need `ANTHROPIC_API_KEY`, so they run locally, not in the agent sandbox.
+   Modules must be able to write the result format documented in `judge.py`.
+
+**Structured tactile graphic (model output, all coordinates normalized 0..1 of the
+source image, origin top-left):**
+
+```json
+{
+  "components": [
+    {
+      "id": "p1", "label": "Panel 1", "parentId": null,
+      "role": "panel | figure | object | text | arrow | other",
+      "box": [x0, y0, x1, y1],
+      "strokes": [{"points": [[x, y], ...], "closed": true}],
+      "embeddedText": "lettering inside this component, reading order",
+      "description": "one sentence"
+    }
+  ]
+}
+```
+
+Rules for the renderer: strokes are centerlines (one pin wide); `role: "text"`
+components are touch regions with no pins at 1x; smaller children win on overlap;
+fill <= 25% at every zoom, dropping the smallest/least important strokes first.

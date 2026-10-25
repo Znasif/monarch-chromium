@@ -1,0 +1,280 @@
+{
+  "id": "wikipedia-heart",
+  "url": "https://en.wikipedia.org/wiki/Heart",
+  "license": "CC BY-SA 4.0 text; images per their Commons pages; snapshot kept local only",
+  "images": {
+    "diagram.svg": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Diagram_of_the_human_heart_%28cropped%29.svg",
+    "anterior.png": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Heart_anterior_exterior_view.png/500px-Heart_anterior_exterior_view.png"
+  },
+  "kind": "encyclopedia article with ~45 content images: labeled vector diagram (served as PNG thumbnail), photos, animations",
+  "textView": {
+    "requiredButtons": [
+      {
+        "image": "Diagram_of_the_human_heart_(cropped).svg thumbnail",
+        "labelIncludes": [
+          "heart",
+          "valves",
+          "arteries",
+          "veins"
+        ],
+        "labelSource": "caption text in the surrounding thumbnail block (no alt, no <figcaption>)",
+        "why": "Most Wikipedia images have empty alt; the meaning is in the caption div."
+      },
+      {
+        "image": "Heart_anterior_exterior_view.png (infobox)",
+        "labelIncludes": [
+          "heart"
+        ],
+        "labelSource": "no alt or caption: fall back to the file name ('Heart anterior exterior view')"
+      },
+      {
+        "image": "Human heart during an autopsy",
+        "labelIncludes": [
+          "autopsy"
+        ],
+        "labelSource": "figcaption"
+      }
+    ],
+    "lazyImages": "about 40 images are lazy-loaded (no pixels until scrolled into view); each must still get a button, and opening it must load the full image",
+    "minButtons": 35,
+    "skip": [
+      "Commons/Wikibooks logos and other icons under 32 px",
+      "protection padlock"
+    ]
+  },
+  "tactile": {
+    "sourceSize": [
+      663,
+      652
+    ],
+    "coordinateSpace": "pixels of the original SVG rendered at its own width/height [x0, y0, x1, y1]; tolerance 25 px",
+    "vectorPath": "the page shows a 250 px PNG thumbnail of an SVG; see openQuestions[0]",
+    "overview1x": {
+      "fit": "about 35 rows tall, centered, about 36 pins wide",
+      "maxFill": 0.25,
+      "shapes": [
+        "outer heart wall / pericardium as one closed outline",
+        "septum between left and right ventricles as one line",
+        "the four chambers as closed regions separated by walls",
+        "vessels as tube outlines leaving the top: superior vena cava, aorta arch, pulmonary artery; inferior vena cava at the bottom",
+        "pulmonary veins as short tube stubs on both sides"
+      ],
+      "drop": [
+        "all label text and dotted leader lines (labels go to components and the caption rows)",
+        "white blood-flow arrows",
+        "shading and color gradients (no pins for color)",
+        "chordae tendineae (thin white strands) at 1x"
+      ],
+      "language": "the SVG holds every label in 5 languages inside <switch systemLanguage>; only the user's language (English) is used",
+      "deviceCheck": "By touch: find the aorta arch at the top and follow it down into the heart."
+    },
+    "isolateLeftVentricle": {
+      "action": "Enter on Chambers, then Enter on Left ventricle",
+      "expect": "left ventricle re-fit to the canvas: its wall, the septum side and the mitral and aortic valve openings at its top; fill <= 0.25"
+    },
+    "zoom": {
+      "levels": [
+        2,
+        4
+      ],
+      "expect": "valve shapes and chordae appear at 4x; fill stays <= 0.25"
+    }
+  },
+  "components": [
+    {
+      "id": "vessels",
+      "label": "Blood vessels",
+      "children": [
+        {
+          "label": "Superior vena cava",
+          "box": [
+            115,
+            35,
+            220,
+            265
+          ]
+        },
+        {
+          "label": "Inferior vena cava",
+          "box": [
+            155,
+            480,
+            220,
+            595
+          ]
+        },
+        {
+          "label": "Aorta",
+          "box": [
+            225,
+            25,
+            425,
+            335
+          ]
+        },
+        {
+          "label": "Pulmonary artery",
+          "box": [
+            270,
+            140,
+            510,
+            360
+          ]
+        },
+        {
+          "label": "Pulmonary veins",
+          "note": "two groups, left and right of the heart"
+        }
+      ]
+    },
+    {
+      "id": "chambers",
+      "label": "Chambers",
+      "children": [
+        {
+          "label": "Right atrium",
+          "box": [
+            160,
+            235,
+            280,
+            425
+          ]
+        },
+        {
+          "label": "Right ventricle",
+          "box": [
+            195,
+            380,
+            455,
+            565
+          ]
+        },
+        {
+          "label": "Left atrium",
+          "box": [
+            335,
+            200,
+            475,
+            305
+          ]
+        },
+        {
+          "label": "Left ventricle",
+          "box": [
+            375,
+            280,
+            565,
+            530
+          ]
+        }
+      ]
+    },
+    {
+      "id": "valves",
+      "label": "Valves",
+      "children": [
+        {
+          "label": "Pulmonary valve",
+          "box": [
+            275,
+            330,
+            330,
+            385
+          ]
+        },
+        {
+          "label": "Aortic valve",
+          "box": [
+            340,
+            320,
+            400,
+            380
+          ]
+        },
+        {
+          "label": "Mitral valve",
+          "box": [
+            400,
+            280,
+            470,
+            340
+          ]
+        },
+        {
+          "label": "Tricuspid valve",
+          "box": [
+            220,
+            400,
+            290,
+            460
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pericardium",
+      "label": "Pericardium",
+      "box": [
+        130,
+        185,
+        575,
+        590
+      ]
+    }
+  ],
+  "componentChecks": [
+    "labels come from the SVG <text> elements (English), matched to the nearest shape through their leader lines",
+    "each labeled part's pins lie inside its box",
+    "finger on the right atrium says 'Right atrium', and says it is on the left side of the picture (anatomical right vs. image left)"
+  ],
+  "navigation": [
+    {
+      "from": "vessels",
+      "key": "right",
+      "to": "chambers"
+    },
+    {
+      "from": "Right atrium",
+      "key": "right",
+      "to": "Left atrium",
+      "note": "keys move in picture space"
+    },
+    {
+      "from": "Right atrium",
+      "key": "down",
+      "to": "Right ventricle"
+    },
+    {
+      "from": "Left atrium",
+      "key": "down",
+      "to": "Left ventricle"
+    },
+    {
+      "from": "Left ventricle",
+      "key": "back",
+      "to": "chambers"
+    }
+  ],
+  "editing": {
+    "tree": [
+      {
+        "action": "split 'Pulmonary veins' into 'Left pulmonary veins' and 'Right pulmonary veins'",
+        "expect": "two components, one on each side"
+      },
+      {
+        "action": "move 'Mitral valve' under 'Left ventricle'",
+        "expect": "Enter on Left ventricle lists the mitral valve"
+      }
+    ],
+    "pins": [
+      {
+        "action": "draw the blood-flow path from the right atrium into the right ventricle",
+        "expect": "the path stays attached to the chambers it crosses and survives zoom and reopen"
+      }
+    ]
+  },
+  "openQuestions": [
+    "Vector source: the page has only a PNG thumbnail; the original SVG is on the file's page. Rule options: (a) use the largest srcset image and raster contours, (b) follow the image's link to a same-site file page and use an SVG if one is offered there. (b) gives exact shapes but needs a general rule, not a Wikipedia rule.",
+    "Colour meaning: blue = oxygen-poor, red = oxygen-rich. Show it with a sparse dot texture on one group (costs fill), or only in labels?"
+  ]
+}
