@@ -22,3 +22,10 @@ committed, for licensing).
 
 A case changes only by human decision. If code and case disagree, record it in
 `docs/agent/DECISIONS.md` and ask; do not edit the case to make a test pass.
+
+## Grading
+
+`../judge.py <case-id> <result.json>` runs exact checks locally, then asks
+`claude-sonnet-5-5` to grade the remaining items within these tolerances, using
+the source image and a picture of the generated pins. Add `--no-llm` for exact
+checks only. Reports go to `reports/` (git-ignored).
