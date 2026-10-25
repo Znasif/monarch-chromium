@@ -1,0 +1,50 @@
+{
+  "caseId": "xkcd-327",
+  "exact": {
+    "fill:overview1x": {
+      "value": 0.18,
+      "limit": 0.25,
+      "pass": true
+    },
+    "fill:isolate:p3": {
+      "value": 0.023,
+      "limit": 0.25,
+      "pass": true
+    },
+    "fill:zoom2x": {
+      "value": 0.085,
+      "limit": 0.25,
+      "pass": true
+    },
+    "fill:zoom4x": {
+      "value": 0.033,
+      "limit": 0.25,
+      "pass": true
+    },
+    "box:Panel 1": {
+      "bestMatch": "Panel 1",
+      "iou": 1.0,
+      "pass": true
+    },
+    "box:Panel 2": {
+      "bestMatch": "Panel 2",
+      "iou": 1.0,
+      "pass": true
+    },
+    "box:Panel 3": {
+      "bestMatch": "Panel 3",
+      "iou": 1.0,
+      "pass": true
+    },
+    "box:Panel 4": {
+      "bestMatch": "Panel 4",
+      "iou": 1.0,
+      "pass": true
+    },
+    "topLevelCount": {
+      "expected": 4,
+      "generated": 4,
+      "pass": true
+    }
+  }
+}

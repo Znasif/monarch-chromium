@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Heart - Encyclopedia Fixture</title>
+</head>
+<body>
+  <!-- Protection padlock icon and tiny Commons/Wikibooks icons (< 32px) — must be skipped -->
+  <div class="page-indicators">
+    <img src="/static/images/padlock-silver.svg" alt="Page protected with padlock" width="20" height="20" class="lock-icon">
+    <img src="/static/images/commons-logo.svg" alt="Commons logo" width="16" height="16">
+    <img src="/static/images/wikibooks-logo.svg" alt="" width="24" height="24">
+  </div>
+
+  <!-- Infobox image with NO alt and NO caption: must fall back to humanized filename -->
+  <aside class="infobox">
+    <img
+      id="infobox-heart"
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Heart_anterior_exterior_view.png/500px-Heart_anterior_exterior_view.png"
+      width="250"
+      height="240">
+  </aside>
+
+  <!-- Thumbnail block with empty alt="" and meaning in .thumbcaption div -->
+  <div class="thumb tright">
+    <div class="thumbinner" style="width:252px;">
+      <img
+        id="diagram-thumb"
+        src="Diagram_of_the_human_heart_(cropped).svg.png"
+        alt=""
+        width="250"
+        height="246">
+      <div class="thumbcaption">
+        Diagram of the human heart showing valves, arteries and veins.
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard <figure> with <figcaption> -->
+  <figure>
+    <img
+      id="autopsy-img"
+      src="Human_heart_during_an_autopsy.jpg"
+      alt=""
+      width="220"
+      height="165">
+    <figcaption>Human heart during an autopsy</figcaption>
+  </figure>
+
+  <!-- 35 lazy-loaded content images (no pixels loaded yet, loading="lazy" + data-src) -->
+  <section id="gallery">
+    <script>
+      const gallery = document.getElementById('gallery');
+      for (let i = 1; i <= 35; i++) {
+        const fig = document.createElement('figure');
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.setAttribute('data-src', `gallery/cardiac_cycle_phase_${i}.png`);
+        img.setAttribute('width', '220');
+        img.setAttribute('height', '160');
+        img.setAttribute('alt', `Cardiac cycle diagram ${i}`);
+        fig.appendChild(img);
+        gallery.appendChild(fig);
+      }
+    </script>
+  </section>
+</body>
+</html>
