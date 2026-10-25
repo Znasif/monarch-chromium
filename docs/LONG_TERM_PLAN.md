@@ -102,7 +102,8 @@ runs in a Linux sandbox without the Monarch.
 | 2 | `agent/step-2` | `SvgCompiler` (SVG → 96×35 1-pin outlines, fill ≤ 25%) + raster contour fallback, golden-file tests | tests green, fill-density assertions pass |
 | 3 | `agent/step-3` | `bridge/` JS: image→button promotion, SVG/Canvas2D geometry capture | headless Firefox + Chromium tests on fixture pages green |
 | 4 | `agent/step-4` | `tier2/`: provider interface, `gemini-4-argon` provider, recorded-fixture tests | tests green, no live API calls in tests |
-| later | — | `app/` on the device, hard sites, explainer video | human-run |
+| 5 | `agent/step-5` | Video storyboard + local `scripts/make_video.py` (Omni). Human-triggered after merge and recording. | `make_video.py --dry-run` works |
+| later | — | `app/` on the device, hard sites | human-run |
 
 ### Rules for every step (managed agent)
 

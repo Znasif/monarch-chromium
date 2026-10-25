@@ -17,3 +17,8 @@ including fill-density assertions. Compile time per fixture < 35 ms on the JVM
 
 Push progress as you go. When green, open a draft PR into agent/step-1, write
 docs/agent/STEP2_REPORT.md. Reply with a 5-line summary and the PR URL.
+
+ADDITION: include golden tests for the "tactile" section of
+test-sites/cases/xkcd-327.json using a synthetic 4-panel fixture: 4 closed panel
+rectangles, >= 1 blank pin column between adjacent panels, lettering not drawn as
+pins at 1x, no background pins, fill <= 0.25 at 1x, 2x, 4x; isolate Panel 3 re-fit.
