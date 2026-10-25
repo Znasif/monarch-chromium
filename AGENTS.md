@@ -36,8 +36,8 @@ This file captures our hackathon engineering patterns, Gemini API rules, and cri
    - Poll `manager.touchedPinCoordinates` at 25ms intervals (40Hz).
    - Acquire tracking only when a single finger lands from an empty state (`previousCount == 0 && touches.size == 1`).
    - Require 3 consecutive empty polls before declaring lift, and clamp step distance (`squaredDistance <= 36` when two hands seen, `<= 400` for one hand).
-   - Subtract `3` from `pointX` in `onSingleTapAtBraillePosition` / `onDoubleTapAtBraillePosition` to compensate for fingertip width.
-   - Trigger `VibrationUtils.startVibration(context, 30)` when the tracked finger enters a new component, and `SoundUtils.errorBeep(context)` when hitting a viewport or `Data Navigator` boundary.
+   - With KeySoft SDK 0.1.131 on the device, the `onDoubleTapAtBraillePosition` point matches the polled finger: apply no X offset (measured 2026-10-25; the older −3 rule moved the point off the part).
+   - No vibration: touch only reads (speech + Braille caption) and must never change the canvas. Beep at a `Data Navigator` boundary.
 
 ---
 

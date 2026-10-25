@@ -1,6 +1,8 @@
 # Monarch Tactile Browser: Universal 96×40 Web, Book & Image Explorer
 
-> **Hackathon Ideation & Architecture Document**
+> **Hackathon Ideation & Architecture Document.** The Android app lives in
+> [`android-app/`](android-app/) (build and key list below); the long-term plan is in
+> [`docs/LONG_TERM_PLAN.md`](docs/LONG_TERM_PLAN.md). Rows marked *(planned)* are not built yet.
 > **100% New Hackathon Work:** Everything in this repository—including all scaffolding, Android/Kotlin code, JavaScript document-start bridges, Gemini 4 Argon spatial/text decomposers, `Data Navigator` spatial graph engine, and verification harnesses—is created from scratch during the hackathon event.
 
 ---
@@ -14,7 +16,7 @@
 2. **Built on Permissive Open-Source Foundations + Native Monarch KeySoft SDK**:
    - **Web Engine**: Android Jetpack `androidx.webkit` (`WebView` + `DOCUMENT_START_SCRIPT`, Apache-2.0) paired with clutter-free DOM normalization inspired by `@mozilla/readability` (Apache-2.0).
    - **Spatial & Hierarchical Component Navigation**: Generalizes Frank Elavsky's open-source [`data-navigator`](https://www.frank.computer/projects/) (MIT License) from charts to **any image, diagram, scanned book page, or multi-panel webcomic**.
-   - **Monarch Hardware & KeySoft SDK**: Leverages `SelfBraillingWidget`, `SelfBraillingManager` (including 40Hz `touchedPinCoordinates`), `Translator` (user-profile Grade 1/2/UEB Braille), `ContextMenuActivity`, `WriteCommandsXmlFileToInternalMemoryStorageExecutor`, `VibrationUtils`, `SoundUtils`, `DialogCreator`, and `.brf` export for **KeyBRF**.
+   - **Monarch Hardware & KeySoft SDK (0.1.131)**: Uses `SelfBraillingWidget`, `SelfBraillingManager` (`displayDots`, 40 Hz `touchedPinCoordinates`, `announceText`) and `Translator` (user-profile Braille). *(planned)* `ContextMenuActivity`, `commands.xml` chord registration, `.brf` export for **KeyBRF**.
 
 ---
 
@@ -25,13 +27,13 @@
 | Built-in Monarch / KeySoft Capability | SDK Class / System Feature | How Our Browser Uses It |
 |---|---|---|
 | **Multi-Line Braille Reading & HTML Quick-Nav** | KeySoft Screen Reader + `WebView` + `KeysoftIME` | In **Text View**, `SelfBraillingWidget` is hidden (`View.GONE`) so KeySoft renders the webpage in 10×32 multi-line Braille for free, supports Pan Up/Down keys, handles Perkins Braille typing via `KeysoftIME`, and provides built-in single-letter HTML quick-nav (`B` = Button, `G` = Graphic, `H` = Heading, `L` = Link). |
-| **Hardware Key Routing (`ZoomIn/Out`, `RightDpad`, `Panning`, Braille Chords)** | `WriteCommandsXmlFileToInternalMemoryStorageExecutor` + `res/raw/commands.xml` | Registers `<context viewIdResourceName="SelfBraillingWidget">` key substitutions on startup so hardware `ZoomIn` (`168`), `ZoomOut` (`169`), Left D-Pad (`19..22`), Right D-Pad (`59|19..22`), `PanningUp/Down` (`92/93`), `Dots8` (`66`), and Braille chord shortcuts reach our activity. |
-| **Native Space+M Context Menu** | `ContextMenuActivity` (`com.humanware.keysoftsdk.contextmenu`) | Provides the native Monarch `Space+M` menu listing all browser & tactile viewer commands with their Braille chord shortcuts. |
-| **Continuous 40Hz Finger Pin Polling + Point-and-Click** | `SelfBraillingManager.touchedPinCoordinates` + `SelfBraillingWidget` | Drives the 96×40 physical pins (`displayDots`), polls live finger coordinates `(x, y)` at 40Hz for **Finger-as-Cursor**, and receives `onSingleTapAtBraillePosition` / `onDoubleTapAtBraillePosition` (with `-3` X fingertip offset). |
+| **Hardware Key Routing (`ZoomIn/Out`, `RightDpad`, `Panning`, Braille Chords)** *(planned)* | `WriteCommandsXmlFileToInternalMemoryStorageExecutor` + `res/raw/commands.xml` | Today the viewer reads the keys that reach `dispatchKeyEvent` unregistered (see §4). Planned: registers `<context viewIdResourceName="SelfBraillingWidget">` key substitutions on startup so hardware `ZoomIn` (`168`), `ZoomOut` (`169`), Left D-Pad (`19..22`), Right D-Pad (`59|19..22`), `PanningUp/Down` (`92/93`), `Dots8` (`66`), and Braille chord shortcuts reach our activity. |
+| **Native Space+M Context Menu** *(planned)* | `ContextMenuActivity` (`com.humanware.keysoftsdk.contextmenu`) | Provides the native Monarch `Space+M` menu listing all browser & tactile viewer commands with their Braille chord shortcuts. |
+| **Continuous 40Hz Finger Pin Polling + Point-and-Click** | `SelfBraillingManager.touchedPinCoordinates` + `SelfBraillingWidget` | Drives the 96×40 physical pins (`displayDots`), polls live finger coordinates `(x, y)` at 40Hz for **Finger-as-Cursor**, and receives `onDoubleTapAtBraillePosition` (finger + Action double-press). With SDK 0.1.131 the double-press point matches the polled finger, so no X offset is applied. |
 | **User-Profile Braille Translation** | `Translator` + `TranslationQuery` (`BrailleGrade.GRADE_UNSPECIFIED`) | Translates component labels into Unicode Braille (`\u2800..\u28FF`) using the user's active KeySoft language profile for our 4-row bottom **Braille Caption Bar** (rows 36–39) and **KeyBRF** exports. |
-| **Haptic Radar & Boundary Audio** | `VibrationUtils.startVibration` + `SoundUtils.errorBeep` | Fires a 30ms haptic pulse when the user's finger crosses into a new semantic component on the 96×36 canvas, and plays the standard KeySoft boundary beep at viewport/graph edges. |
-| **KeyBRF (`.brf`) Offline Study Export** | `Translator` + `.brf` Formatter + Android Intent | Exports the current webpage/book page text + **Gemini 4 Argon's hierarchical spatial breakdown of every image** into a 32-cell-wide `.brf` file that opens directly in **KeyBRF** (`Space+S`). |
-| **Ecosia & Tactile Viewer Shortcut Muscle-Memory** | `commands.xml` Chord Bindings | Preserves standard Monarch shortcuts: `Enter+O` (Open URL/Search), `Backspace+O` (Open current image/viewport in Tactile Viewer), `Backspace+D` (AI Spatial Overview), `Space+Dots 1..6` (9-point grid jumps), `Space+Dots 1-3` / `4-6` (Decrease/Increase detail). |
+| **Boundary Audio** | Android `ToneGenerator` | A short beep at the first/last part and when a press hits nothing. No vibration: touch only reads. |
+| **KeyBRF (`.brf`) Offline Study Export** *(planned)* | `Translator` + `.brf` Formatter + Android Intent | Exports the current webpage/book page text + **Gemini 4 Argon's hierarchical spatial breakdown of every image** into a 32-cell-wide `.brf` file that opens directly in **KeyBRF** (`Space+S`). |
+| **Ecosia & Tactile Viewer Shortcut Muscle-Memory** *(planned)* | `commands.xml` Chord Bindings | Preserves standard Monarch shortcuts: `Enter+O` (Open URL/Search), `Backspace+O` (Open current image/viewport in Tactile Viewer), `Backspace+D` (AI Spatial Overview), `Space+Dots 1..6` (9-point grid jumps), `Space+Dots 1-3` / `4-6` (Decrease/Increase detail). |
 
 ### 2.2 What We Implement Ourselves (100% Original Hackathon Contributions)
 
@@ -41,17 +43,18 @@
 2. **Hybrid Gemini 4 Argon + Component-Snapped 1-Pin Tactile Compiler**:
    - **Standard `<svg>` Fast-Path**: Parses vector shapes (`<path>`, `<rect>`, `<circle>`, `<line>`, `<polygon>`, `<polyline>`) directly into crisp 1-pin tactile contours and groups them into navigable components.
    - **Universal Raster Image Path (`gemini-4-argon` + Adaptive Component-Masked Contours)**:
-     - Calls `gemini-4-argon` to decompose any photo, illustration, diagram, or comic panel into a **hierarchical component tree** (`id`, `label`, `description`, `embeddedText`, `bbox: [ymin, xmin, ymax, xmax]`, `contourPolygon`, `lodTier`, `parentId`, `childIds`).
-     - Runs an on-device adaptive Canny/contour edge extractor **masked and snapped to Argon's component bounding regions**—suppressing background noise and keeping raised-pin density **below 20%** for uncluttered tactile legibility.
+     - Sends a 768 px copy of any photo, illustration, diagram, or comic panel to `gemini-4-argon` and gets back a **structured tactile graphic**: a component tree (`id`, `label`, `parentId`, `role`, `box: [x0, y0, x1, y1]`, `strokes` as centerline polylines, `embeddedText`, `description`; `docs/LONG_TERM_PLAN.md` §9).
+     - Draws strokes as 1-pin lines, outlines only (no texture); text parts are touch regions without pins; every panel gets a frame with a blank pin column between frames; fill stays **≤ 25%** by dropping the smallest parts' strokes first.
+     - Each result is stored under the SHA-256 of the image bytes, so the same image is never sent to Argon twice.
 3. **Generalized `Data Navigator` Spatial & Hierarchical Graph Engine**:
    - Adapts Frank Elavsky's [`data-navigator`](https://www.frank.computer/projects/) model to arbitrary visual scenes:
      - **Directional Edges (`up`, `down`, `left`, `right`)**: Computed from component centroids and spatial adjacency.
      - **Hierarchical Edges (`enter` / `exit`)**: Pressing **Enter (Dot 8)** on a component (e.g., *Panel 2* of a webcomic, the *Heart* in an anatomy diagram, or a *Figure* on a scanned book page) **isolates and auto-fits that single component** onto the 96×36 pin array and exposes its child sub-components!
 4. **MonarchIO-Style 96×40 Tactile Image Viewer**:
    - **Rows 0–34 (`96×35` Tactile Canvas)** + **Row 35 (Blank Separator)** + **Rows 36–39 (`96×4` `BrailleCaptionRegion`)**.
-   - **First-Finger Ownership (`FingerOwnership`)**: 40Hz polling of `manager.touchedPinCoordinates` that locks onto the first finger, ignores a resting second hand, vibrates via `VibrationUtils` on component entry, speaks the component label, and updates the bottom Braille caption bar.
-   - **Dual Left D-Pad Modes**: Toggleable between **Spatial Cursor Mode** (1-pin cursor steps) and **Component Jump Mode** (`Data Navigator` node-to-node jumps + `Enter` to isolate/drill in).
-   - **Right D-Pad Panning & `+`/`−` Progressive LOD Zoom (`1×` to `8×`)**: Smoothly pans and zooms the 96×35 viewport, revealing deeper component contours as you zoom in.
+   - **Finger tracking**: 40 Hz polling of `manager.touchedPinCoordinates` off the UI thread, following one finger when a second hand comes down. Entering a part speaks it and puts its name in the Braille caption; **the canvas pins never change while you touch**.
+   - **Left D-Pad**: previous/next part at the current level (`Data Navigator` reading order); `Enter` / Action double-press opens a part. *(planned)* a 1-pin Spatial Cursor Mode.
+   - **Right D-Pad Panning & `+`/`−` Zoom**: 2× per press on the selected part; pans a quarter of the view.
 
 ---
 
@@ -65,19 +68,56 @@
 
 ---
 
-## 4. Hardware Control & Shortcut Summary
+## 4. Keys and Shortcuts
 
-| Control / Shortcut | Behavior in Text View | Behavior in 96×40 Tactile Image Viewer |
+Single keys only for now; no chord is needed. Every key press is logged
+(`adb logcat -s MonarchTactile`), so a key that does nothing can be checked.
+
+### Tactile Image Viewer
+
+| Shortcut (Monarch) | USB keyboard | Action |
 |---|---|---|
-| **Finger Glide (1st Finger)** | Standard KeySoft Braille line reading | **40Hz Finger-as-Cursor**: Vibrates on component boundary, speaks label, updates Rows 36–39 Braille Caption Bar |
-| **Finger + Double-Press Action Button** | Point-and-click on HTML link or `[Explore Tactile Image]` button | Snaps cursor to `(x - 3, y)`, speaks full component detail & spatial relationships |
-| **Left D-Pad** | Standard KeySoft navigation | **Spatial Cursor Mode**: Moves cursor 1 pin<br>**Component Jump Mode**: Jumps `up`/`down`/`left`/`right` in `Data Navigator` graph |
-| **Enter (Dot 8)** | Activates focused link or `[Explore Tactile Image]` button | **Isolates & auto-fits** selected component onto 96×35 canvas (drills into child nodes) |
-| **Right D-Pad** | Standard KeySoft navigation | **Pans viewport** (`North`, `South`, `East`, `West`) |
-| **`+` / `−` Zoom Buttons** | Adjusts text/braille spacing | **Zooms viewport (`1×` → `8×`)** with progressive LOD contour reveal |
-| **`Space + Dots 1..6` / `Space + Dots 2-5`** | Standard KeySoft chords | **Tactile Viewer 9-Grid Jumps** (Top-Left, Center, Bottom-Right, etc.) |
-| **`Space + Dots 1-3` / `Space + Dots 4-6`** | Previous / Next element | **Decrease / Increase Tactile Detail Threshold** |
-| **`Backspace + O`** | Opens focused image or current viewport in 96×40 Tactile Viewer | Re-centers / resets view to 1× Overview |
-| **`Backspace + D`** | Decomposes current scanned book page into Braille text + figure buttons | Speaks & displays full Gemini 4 Argon AI Spatial Scene Summary |
-| **`Space + S`** | Exports page text + tactile image breakdown to `.brf` (KeyBRF) | Exports current image's spatial component breakdown to `.brf` (KeyBRF) |
-| **Back (Triangle / `Space + E`)** | Browser history Back | Steps out from isolated component → 1× image overview → returns to exact button in Text View |
+| Finger on the pins | none | Hear the part under the finger; its name appears in Braille on rows 36–39. The canvas does not change. Open space is silent. |
+| Finger + double-press the Action button | none | Open the part under the finger at the current level: on the whole image, the panel or figure the finger is in; inside it, the part under the finger. A part with nothing inside is read out (label, description, text). |
+| Left D-Pad left or up, or Pan Up | ← or ↑, Page Up | Previous part at the same level |
+| Left D-Pad right or down, or Pan Down | → or ↓, Page Down | Next part at the same level |
+| Enter (dot 8) | Enter | Open the selected part (the one last touched or stepped to) |
+| Back (triangle) | Esc | Out one level; from the whole image, back to the web page |
+| Zoom + (oval, bottom right) | `+` or `=` | Zoom 2× on the selected part |
+| Zoom − (oval, bottom left) | `-` | Zoom out one step (same as Back while zoomed) |
+| Right D-Pad | Shift + arrow | Pan a quarter of the view (when zoomed) |
+
+KeySoft may take some keys before the app sees them (MonarchTempest
+`docs/PHASE0-HARDWARE-FINDINGS.md`): Esc and character keys from a USB keyboard, and
+left/right on the left D-Pad in some modes. Use the Monarch key in the same row instead.
+
+### Browser (Text View)
+
+| Shortcut (Monarch) | USB keyboard | Action |
+|---|---|---|
+| KeySoft reading keys, `B` quick-nav | same | Read the page; every picture is followed by a button **Explore tactile image: \<label\>** |
+| Enter (dot 8) on that button | Enter | Open the picture in the Tactile Image Viewer |
+| Back (triangle) | Esc | Previous page |
+
+### Planned chords *(not built yet)*
+
+| Shortcut | Action |
+|---|---|
+| Space+M (dots 1-3-4-9) | Context menu listing every command |
+| Enter+O | Open URL / search |
+| Backspace+O | Open the focused image in the Tactile Image Viewer |
+| Backspace+D | Spoken overview of the whole image |
+| Space+S (dots 2-3-4-9) | Export page text and image breakdown to KeyBRF (`.brf`) |
+| Space+dots 1-3 / 4-6 | Less / more detail |
+
+## 5. Build and Install
+
+```bash
+cd android-app
+# KeySoftSDK-0.1.131.aar goes in app/libs/ (proprietary, git-ignored)
+cmd.exe /c "set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr&& gradlew.bat :app:assembleDebug"
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+A debug build reads `GEMINI_API_KEY` from the repo's `.env` so new images can be sent to
+Argon; do not share that APK.
