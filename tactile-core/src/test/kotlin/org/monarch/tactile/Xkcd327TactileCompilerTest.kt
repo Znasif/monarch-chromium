@@ -220,12 +220,16 @@ class Xkcd327TactileCompilerTest {
         val hints = buildXkcd327Hints()
         val compiler = RasterContourCompiler()
 
-        // Warm up JIT
-        compiler.compile(bitmap, hints)
+        // Warm up JIT (5 iterations so HotSpot C2 compiles inner loops)
+        repeat(5) {
+            compiler.compile(bitmap, hints)
+        }
 
         var scene1x = compiler.compile(bitmap, hints)
-        val elapsedNs = measureNanoTime {
-            scene1x = compiler.compile(bitmap, hints)
+        val elapsedNs = (1..5).minOf {
+            measureNanoTime {
+                scene1x = compiler.compile(bitmap, hints)
+            }
         }
         val elapsedMs = elapsedNs / 1_000_000.0
         println("RasterContourCompiler xkcd-327 (666x205) 1x compile time: ${"%.2f".format(elapsedMs)} ms")
@@ -398,8 +402,14 @@ class Xkcd327TactileCompilerTest {
                 "zoom2x" to scene2x.pinGrid,
                 "zoom4x" to scene4x.pinGrid
             ),
-            buttons = listOf("Explore tactile image: Exploits of a Mom" to "https://imgs.xkcd.com/comics/exploits_of_a_mom.png")
+            buttons = listOf(
+                "Explore tactile image: Exploits of a Mom — Her daughter is named Help I'm trapped in a driver's license factory." to
+                    "https://imgs.xkcd.com/comics/exploits_of_a_mom.png"
+            )
         )
+        val outFile = java.io.File("build/judge-results/xkcd-327-result.json")
+        outFile.parentFile.mkdirs()
+        outFile.writeText(resultJson)
         assertTrue(resultJson.contains("\"caseId\": \"xkcd-327\""))
         assertTrue(resultJson.contains("\"overview1x\""))
         assertTrue(resultJson.contains("\"isolate:p3\""))

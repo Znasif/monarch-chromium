@@ -56,3 +56,23 @@ This file captures our hackathon engineering patterns, Gemini API rules, and cri
      ```
 2. **JVM Proxy Flags (`JAVA_TOOL_OPTIONS`)**:
    - Java's `HttpURLConnection` (used by `gradle-wrapper.jar`) ignores `HTTP_PROXY` / `HTTPS_PROXY` environment variables. Always export `JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=10.100.0.1 -Dhttp.proxyPort=8081 -Dhttps.proxyHost=10.100.0.1 -Dhttps.proxyPort=8081"` (or configure `systemProp.http.proxyHost` / `systemProp.https.proxyHost` in `gradle.properties`).
+3. **Playwright Headless Firefox in the Cloud Run Sandbox**:
+   - Because the container restricts unprivileged user namespaces, Playwright's headless Firefox (`npx playwright install firefox`) crashes on `browser.newPage()` unless content/process sandboxes are disabled via launch options:
+     ```js
+     firefox.launch({
+       env: {
+         ...process.env,
+         MOZ_DISABLE_CONTENT_SANDBOX: '1',
+         MOZ_DISABLE_GMP_SANDBOX: '1',
+         MOZ_DISABLE_RDD_SANDBOX: '1',
+         MOZ_DISABLE_SOCKET_PROCESS_SANDBOX: '1',
+         MOZ_DISABLE_UTILITY_SANDBOX: '1'
+       },
+       firefoxUserPrefs: {
+         'security.sandbox.content.level': 0,
+         'media.RDD-process.enabled': false
+       }
+     })
+     ```
+4. **Python `httpx` / `google-genai` `NO_PROXY` IPv6 Parsing Quirk**:
+   - The container's default `NO_PROXY="localhost,127.0.0.1,::1,[::1]"` causes `httpx` (used inside `google-genai`) to raise `httpx.InvalidURL: Invalid port: ':1]'` when initializing `genai.Client()`. Always pass `NO_PROXY=localhost,127.0.0.1 no_proxy=localhost,127.0.0.1` when running Python scripts that instantiate `genai.Client()`.
