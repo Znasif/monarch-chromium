@@ -23,7 +23,15 @@ for (const c of cases) {
   const out = path.join(outRoot, c.id);
   await fs.mkdir(path.join(out, 'images'), { recursive: true });
   const page = await context.newPage();
-  await page.goto(c.url, { waitUntil: 'networkidle', timeout: 60000 });
+  try {
+    // Some pages never go network-idle (polling, ads); wait for load plus settle time.
+    await page.goto(c.url, { waitUntil: 'load', timeout: 90000 });
+    await page.waitForTimeout(c.settleMs ?? 5000);
+  } catch (error) {
+    console.log(`${c.id}: FAILED to load: ${error.message.split('\n')[0]}`);
+    await page.close();
+    continue;
+  }
 
   const cdp = await context.newCDPSession(page);
   const { data } = await cdp.send('Page.captureSnapshot', { format: 'mhtml' });

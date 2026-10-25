@@ -31,3 +31,11 @@ are NOT in the repo (licensing). Do not fetch those sites. Build small synthetic
 fixtures that mimic each case (for xkcd-327: a 666x205 line drawing with 4 panel
 rectangles at the listed boxes, figures and lettering) and test against the
 expectations that apply to your step.
+
+Grading: GEMINI_API_KEY is available in this sandbox (the proxy fills it in).
+When your step produces tactile output, write it in the result format documented
+in test-sites/judge.py and run
+  python test-sites/judge.py <case-id> <result.json> --grader argon
+Commit the report (test-sites/reports/ is git-ignored, so copy it to
+docs/agent/grades/STEP<N>-<case-id>.json). Keep grading runs few: once per case
+when the step's tests are green.

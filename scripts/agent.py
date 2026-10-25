@@ -55,6 +55,27 @@ def save_state(state):
     STATE.write_text(json.dumps(state, indent=2))
 
 
+GEMINI_CREDENTIAL = "monarch-gemini-key"
+
+
+def ensure_gemini_credential(client):
+    """Store the Gemini key once so the sandbox can run Argon grading.
+
+    The sandbox only sees a placeholder; the egress proxy substitutes the real key
+    on requests to generativelanguage.googleapis.com.
+    """
+    try:
+        client.credentials.get(id=GEMINI_CREDENTIAL)
+    except Exception:
+        client.credentials.create(
+            id=GEMINI_CREDENTIAL,
+            type="environment_variable",
+            value=os.environ["GEMINI_API_KEY"],
+            trusted_domains=["generativelanguage.googleapis.com"],
+            injection_location="header",
+        )
+
+
 def environment(github_token):
     basic = base64.b64encode(f"x-oauth-basic:{github_token}".encode()).decode()
     sources = [{"type": "repository", "source": REPO, "target": "/workspace/monarch-chromium"}]
@@ -63,6 +84,7 @@ def environment(github_token):
     return {
         "type": "remote",
         "sources": sources,
+        "env": {"GEMINI_API_KEY": {"credential": GEMINI_CREDENTIAL}},
         "network": {
             "allowlist": [
                 {"domain": "github.com", "transform": {"Authorization": f"Basic {basic}"}},
@@ -81,6 +103,13 @@ def prompt(step):
 
 
 def run_step(client, state, step, github_token):
+    running = state["steps"].get(str(step), {})
+    if running.get("status") in ("in_progress", "queued"):
+        # Resume watching a step a previous launcher started; do not start it twice.
+        interaction = client.interactions.get(id=running["interaction_id"])
+        print(f"step {step}: resuming {interaction.id}", flush=True)
+        return wait_for(client, state, step, interaction)
+
     request = {
         "agent": "antigravity-preview-09-2026",
         "agent_config": {"type": "antigravity", "model": "gemini-4-argon"},
@@ -97,7 +126,12 @@ def run_step(client, state, step, github_token):
     state["active_interaction_id"] = interaction.id
     save_state(state)
     print(f"step {step}: started {interaction.id}", flush=True)
+    return wait_for(client, state, step, interaction)
 
+
+def wait_for(client, state, step, interaction):
+    state["active_interaction_id"] = interaction.id
+    save_state(state)
     deadline = time.time() + STEP_TIMEOUT_MINUTES * 60
     while interaction.status in ("in_progress", "queued"):
         if time.time() > deadline:
@@ -127,6 +161,7 @@ def main():
 
     if command == "run":
         github_token = os.environ["GITHUB_TOKEN"]
+        ensure_gemini_credential(client)
         for step in sys.argv[2:]:
             if not run_step(client, state, step, github_token):
                 print(f"stopping: step {step} did not complete", flush=True)
