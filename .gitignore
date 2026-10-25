@@ -30,3 +30,4 @@ venv/
 
 # Managed-agent run logs (local only)
 agent-runs/
+agent-runs.log
