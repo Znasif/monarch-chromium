@@ -31,3 +31,7 @@ venv/
 # Managed-agent run logs (local only)
 agent-runs/
 agent-runs.log
+
+# Proprietary HumanWare SDK (copied from the local Gradle cache) and local demo pages
+android-app/app/libs/
+android-app/app/src/main/assets/demo/

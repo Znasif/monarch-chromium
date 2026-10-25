@@ -1,0 +1,1633 @@
+{
+ "components": [
+  {
+   "id": "panel_1",
+   "label": "Panel 1: School calls about computer trouble",
+   "parentId": null,
+   "role": "panel",
+   "box": [
+    0.0,
+    0.0,
+    0.223,
+    1.0
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.001,
+       0.005
+      ],
+      [
+       0.222,
+       0.005
+      ],
+      [
+       0.222,
+       0.995
+      ],
+      [
+       0.001,
+       0.995
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.036,
+       0.44
+      ],
+      [
+       0.041,
+       0.483
+      ],
+      [
+       0.037,
+       0.474
+      ],
+      [
+       0.044,
+       0.517
+      ],
+      [
+       0.048,
+       0.525
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "First bordered panel: a woman stands next to a small table, holding a mug and answering a phone call."
+  },
+  {
+   "id": "p1_text_phone",
+   "label": "Voice on the phone",
+   "parentId": "panel_1",
+   "role": "text",
+   "box": [
+    0.012,
+    0.062,
+    0.209,
+    0.411
+   ],
+   "strokes": [],
+   "embeddedText": "HI, THIS IS YOUR SON'S SCHOOL. WE'RE HAVING SOME COMPUTER TROUBLE.",
+   "description": "Text from the phone speaker: 'HI, THIS IS YOUR SON'S SCHOOL. WE'RE HAVING SOME COMPUTER TROUBLE.'"
+  },
+  {
+   "id": "p1_mom",
+   "label": "Mom on the phone, holding a mug",
+   "parentId": "panel_1",
+   "role": "figure",
+   "box": [
+    0.06,
+    0.488,
+    0.111,
+    0.893
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.09,
+       0.521
+      ],
+      [
+       0.094,
+       0.548
+      ],
+      [
+       0.095,
+       0.576
+      ],
+      [
+       0.092,
+       0.6
+      ],
+      [
+       0.088,
+       0.614
+      ],
+      [
+       0.081,
+       0.619
+      ],
+      [
+       0.074,
+       0.614
+      ],
+      [
+       0.069,
+       0.595
+      ],
+      [
+       0.066,
+       0.562
+      ],
+      [
+       0.066,
+       0.538
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.063,
+       0.629
+      ],
+      [
+       0.061,
+       0.576
+      ],
+      [
+       0.061,
+       0.529
+      ],
+      [
+       0.065,
+       0.5
+      ],
+      [
+       0.073,
+       0.49
+      ],
+      [
+       0.084,
+       0.49
+      ],
+      [
+       0.091,
+       0.51
+      ],
+      [
+       0.089,
+       0.521
+      ],
+      [
+       0.078,
+       0.517
+      ],
+      [
+       0.066,
+       0.538
+      ],
+      [
+       0.066,
+       0.624
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.068,
+       0.557
+      ],
+      [
+       0.072,
+       0.552
+      ],
+      [
+       0.076,
+       0.619
+      ],
+      [
+       0.072,
+       0.624
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.079,
+       0.619
+      ],
+      [
+       0.077,
+       0.729
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.077,
+       0.729
+      ],
+      [
+       0.065,
+       0.886
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.077,
+       0.729
+      ],
+      [
+       0.095,
+       0.89
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.078,
+       0.624
+      ],
+      [
+       0.07,
+       0.69
+      ],
+      [
+       0.071,
+       0.595
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.079,
+       0.624
+      ],
+      [
+       0.09,
+       0.69
+      ],
+      [
+       0.099,
+       0.7
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.1,
+       0.681
+      ],
+      [
+       0.11,
+       0.681
+      ],
+      [
+       0.11,
+       0.729
+      ],
+      [
+       0.1,
+       0.729
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.1,
+       0.69
+      ],
+      [
+       0.097,
+       0.695
+      ],
+      [
+       0.097,
+       0.719
+      ],
+      [
+       0.1,
+       0.724
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.105,
+       0.662
+      ],
+      [
+       0.106,
+       0.633
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Stick-figure woman with shoulder-length hair holding a phone to her ear and a steaming mug in her other hand."
+  },
+  {
+   "id": "p1_table",
+   "label": "Small round table",
+   "parentId": "panel_1",
+   "role": "object",
+   "box": [
+    0.123,
+    0.662,
+    0.188,
+    0.919
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.123,
+       0.69
+      ],
+      [
+       0.132,
+       0.676
+      ],
+      [
+       0.155,
+       0.667
+      ],
+      [
+       0.178,
+       0.667
+      ],
+      [
+       0.187,
+       0.676
+      ],
+      [
+       0.181,
+       0.695
+      ],
+      [
+       0.158,
+       0.705
+      ],
+      [
+       0.134,
+       0.705
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.131,
+       0.705
+      ],
+      [
+       0.134,
+       0.795
+      ],
+      [
+       0.132,
+       0.905
+      ],
+      [
+       0.135,
+       0.905
+      ],
+      [
+       0.137,
+       0.705
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.151,
+       0.705
+      ],
+      [
+       0.151,
+       0.89
+      ],
+      [
+       0.154,
+       0.886
+      ],
+      [
+       0.154,
+       0.705
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.179,
+       0.695
+      ],
+      [
+       0.177,
+       0.79
+      ],
+      [
+       0.182,
+       0.914
+      ],
+      [
+       0.184,
+       0.914
+      ],
+      [
+       0.182,
+       0.79
+      ],
+      [
+       0.183,
+       0.69
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "A small three-legged round table to the right of the woman."
+  },
+  {
+   "id": "panel_2",
+   "label": "Panel 2: Mom sets down her mug and asks what happened",
+   "parentId": null,
+   "role": "panel",
+   "box": [
+    0.224,
+    0.0,
+    0.464,
+    1.0
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.391,
+       0.281
+      ],
+      [
+       0.39,
+       0.324
+      ],
+      [
+       0.382,
+       0.381
+      ],
+      [
+       0.371,
+       0.429
+      ],
+      [
+       0.363,
+       0.452
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.285,
+       0.405
+      ],
+      [
+       0.292,
+       0.443
+      ],
+      [
+       0.288,
+       0.438
+      ],
+      [
+       0.295,
+       0.481
+      ],
+      [
+       0.299,
+       0.49
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Second borderless panel: the woman has placed her mug on the table and asks if her son broke something."
+  },
+  {
+   "id": "p2_text_mom",
+   "label": "Mom's question",
+   "parentId": "panel_2",
+   "role": "text",
+   "box": [
+    0.249,
+    0.062,
+    0.452,
+    0.219
+   ],
+   "strokes": [],
+   "embeddedText": "OH, DEAR - DID HE BREAK SOMETHING?",
+   "description": "Mom speaks: 'OH, DEAR - DID HE BREAK SOMETHING?'"
+  },
+  {
+   "id": "p2_text_phone",
+   "label": "Voice on the phone",
+   "parentId": "panel_2",
+   "role": "text",
+   "box": [
+    0.252,
+    0.295,
+    0.369,
+    0.357
+   ],
+   "strokes": [],
+   "embeddedText": "IN A WAY-",
+   "description": "Phone voice replies: 'IN A WAY-'"
+  },
+  {
+   "id": "p2_mom",
+   "label": "Mom on the phone",
+   "parentId": "panel_2",
+   "role": "figure",
+   "box": [
+    0.307,
+    0.462,
+    0.351,
+    0.895
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.314,
+       0.51
+      ],
+      [
+       0.326,
+       0.49
+      ],
+      [
+       0.335,
+       0.481
+      ],
+      [
+       0.34,
+       0.505
+      ],
+      [
+       0.348,
+       0.519
+      ],
+      [
+       0.349,
+       0.552
+      ],
+      [
+       0.346,
+       0.581
+      ],
+      [
+       0.338,
+       0.6
+      ],
+      [
+       0.327,
+       0.6
+      ],
+      [
+       0.318,
+       0.581
+      ],
+      [
+       0.314,
+       0.543
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.311,
+       0.6
+      ],
+      [
+       0.309,
+       0.533
+      ],
+      [
+       0.311,
+       0.486
+      ],
+      [
+       0.319,
+       0.467
+      ],
+      [
+       0.332,
+       0.467
+      ],
+      [
+       0.342,
+       0.471
+      ],
+      [
+       0.348,
+       0.5
+      ],
+      [
+       0.35,
+       0.552
+      ],
+      [
+       0.348,
+       0.595
+      ],
+      [
+       0.341,
+       0.595
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.313,
+       0.529
+      ],
+      [
+       0.317,
+       0.524
+      ],
+      [
+       0.324,
+       0.595
+      ],
+      [
+       0.32,
+       0.6
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.332,
+       0.6
+      ],
+      [
+       0.334,
+       0.724
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.334,
+       0.724
+      ],
+      [
+       0.316,
+       0.881
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.334,
+       0.724
+      ],
+      [
+       0.349,
+       0.89
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.331,
+       0.605
+      ],
+      [
+       0.323,
+       0.671
+      ],
+      [
+       0.321,
+       0.581
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.333,
+       0.605
+      ],
+      [
+       0.349,
+       0.743
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Stick-figure woman listening on the phone with her other arm down."
+  },
+  {
+   "id": "p2_table_mug",
+   "label": "Table with steaming mug on it",
+   "parentId": "panel_2",
+   "role": "object",
+   "box": [
+    0.369,
+    0.59,
+    0.433,
+    0.905
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.381,
+       0.629
+      ],
+      [
+       0.391,
+       0.629
+      ],
+      [
+       0.391,
+       0.676
+      ],
+      [
+       0.381,
+       0.676
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.381,
+       0.638
+      ],
+      [
+       0.377,
+       0.643
+      ],
+      [
+       0.377,
+       0.667
+      ],
+      [
+       0.381,
+       0.671
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.385,
+       0.61
+      ],
+      [
+       0.385,
+       0.595
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.388,
+       0.61
+      ],
+      [
+       0.388,
+       0.6
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.377,
+       0.657
+      ],
+      [
+       0.369,
+       0.671
+      ],
+      [
+       0.375,
+       0.686
+      ],
+      [
+       0.398,
+       0.69
+      ],
+      [
+       0.422,
+       0.681
+      ],
+      [
+       0.432,
+       0.662
+      ],
+      [
+       0.424,
+       0.648
+      ],
+      [
+       0.391,
+       0.648
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.375,
+       0.686
+      ],
+      [
+       0.376,
+       0.781
+      ],
+      [
+       0.374,
+       0.89
+      ],
+      [
+       0.378,
+       0.89
+      ],
+      [
+       0.379,
+       0.686
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.395,
+       0.69
+      ],
+      [
+       0.395,
+       0.876
+      ],
+      [
+       0.398,
+       0.871
+      ],
+      [
+       0.398,
+       0.69
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.423,
+       0.676
+      ],
+      [
+       0.421,
+       0.776
+      ],
+      [
+       0.427,
+       0.9
+      ],
+      [
+       0.429,
+       0.9
+      ],
+      [
+       0.425,
+       0.776
+      ],
+      [
+       0.427,
+       0.671
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "The small round table now has the steaming mug resting on top of it."
+  },
+  {
+   "id": "panel_3",
+   "label": "Panel 3: The SQL injection name 'Bobby Tables'",
+   "parentId": null,
+   "role": "panel",
+   "box": [
+    0.464,
+    0.0,
+    0.72,
+    1.0
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.465,
+       0.005
+      ],
+      [
+       0.719,
+       0.005
+      ],
+      [
+       0.719,
+       0.995
+      ],
+      [
+       0.465,
+       0.995
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.484,
+       0.371
+      ],
+      [
+       0.483,
+       0.433
+      ],
+      [
+       0.478,
+       0.41
+      ],
+      [
+       0.479,
+       0.462
+      ],
+      [
+       0.473,
+       0.438
+      ],
+      [
+       0.478,
+       0.495
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.531,
+       0.586
+      ],
+      [
+       0.547,
+       0.605
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Third bordered panel: the school asks about the son's SQL-injection name, and the mom confirms his nickname is Little Bobby Tables."
+  },
+  {
+   "id": "p3_text_phone",
+   "label": "Voice on the phone asking about the son's name",
+   "parentId": "panel_3",
+   "role": "text",
+   "box": [
+    0.485,
+    0.067,
+    0.67,
+    0.414
+   ],
+   "strokes": [],
+   "embeddedText": "DID YOU REALLY NAME YOUR SON Robert'); DROP TABLE Students;-- ?",
+   "description": "Phone voice asks: 'DID YOU REALLY NAME YOUR SON Robert'); DROP TABLE Students;-- ?'"
+  },
+  {
+   "id": "p3_mom",
+   "label": "Mom drinking from her mug",
+   "parentId": "panel_3",
+   "role": "figure",
+   "box": [
+    0.482,
+    0.49,
+    0.53,
+    0.957
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.514,
+       0.519
+      ],
+      [
+       0.519,
+       0.552
+      ],
+      [
+       0.521,
+       0.586
+      ],
+      [
+       0.518,
+       0.614
+      ],
+      [
+       0.511,
+       0.629
+      ],
+      [
+       0.501,
+       0.629
+      ],
+      [
+       0.493,
+       0.605
+      ],
+      [
+       0.49,
+       0.567
+      ],
+      [
+       0.49,
+       0.538
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.485,
+       0.638
+      ],
+      [
+       0.483,
+       0.581
+      ],
+      [
+       0.484,
+       0.529
+      ],
+      [
+       0.489,
+       0.5
+      ],
+      [
+       0.5,
+       0.495
+      ],
+      [
+       0.51,
+       0.495
+      ],
+      [
+       0.516,
+       0.514
+      ],
+      [
+       0.514,
+       0.524
+      ],
+      [
+       0.502,
+       0.519
+      ],
+      [
+       0.49,
+       0.538
+      ],
+      [
+       0.489,
+       0.633
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.491,
+       0.562
+      ],
+      [
+       0.495,
+       0.557
+      ],
+      [
+       0.503,
+       0.629
+      ],
+      [
+       0.499,
+       0.633
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.505,
+       0.629
+      ],
+      [
+       0.502,
+       0.771
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.502,
+       0.771
+      ],
+      [
+       0.486,
+       0.943
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.502,
+       0.771
+      ],
+      [
+       0.52,
+       0.952
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.504,
+       0.633
+      ],
+      [
+       0.494,
+       0.695
+      ],
+      [
+       0.497,
+       0.61
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.506,
+       0.633
+      ],
+      [
+       0.516,
+       0.695
+      ],
+      [
+       0.522,
+       0.652
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.519,
+       0.614
+      ],
+      [
+       0.528,
+       0.605
+      ],
+      [
+       0.529,
+       0.652
+      ],
+      [
+       0.52,
+       0.662
+      ]
+     ],
+     "closed": true
+    }
+   ],
+   "embeddedText": "",
+   "description": "Stick-figure woman on the phone, raising her mug toward her face."
+  },
+  {
+   "id": "p3_text_mom",
+   "label": "Mom's reply",
+   "parentId": "panel_3",
+   "role": "text",
+   "box": [
+    0.553,
+    0.571,
+    0.706,
+    0.824
+   ],
+   "strokes": [],
+   "embeddedText": "OH, YES. LITTLE BOBBY TABLES, WE CALL HIM.",
+   "description": "Mom replies: 'OH, YES. LITTLE BOBBY TABLES, WE CALL HIM.'"
+  },
+  {
+   "id": "panel_4",
+   "label": "Panel 4: Sanitize your database inputs",
+   "parentId": null,
+   "role": "panel",
+   "box": [
+    0.735,
+    0.0,
+    1.0,
+    1.0
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.736,
+       0.005
+      ],
+      [
+       0.999,
+       0.005
+      ],
+      [
+       0.999,
+       0.995
+      ],
+      [
+       0.736,
+       0.995
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.768,
+       0.343
+      ],
+      [
+       0.767,
+       0.405
+      ],
+      [
+       0.762,
+       0.381
+      ],
+      [
+       0.763,
+       0.433
+      ],
+      [
+       0.757,
+       0.41
+      ],
+      [
+       0.761,
+       0.467
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.81,
+       0.576
+      ],
+      [
+       0.823,
+       0.605
+      ],
+      [
+       0.833,
+       0.614
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Fourth bordered panel: the school says they lost this year's student records, and the mom replies that she hopes they learned to sanitize their database inputs."
+  },
+  {
+   "id": "p4_text_phone",
+   "label": "Voice on the phone",
+   "parentId": "panel_4",
+   "role": "text",
+   "box": [
+    0.754,
+    0.062,
+    0.985,
+    0.314
+   ],
+   "strokes": [],
+   "embeddedText": "WELL, WE'VE LOST THIS YEAR'S STUDENT RECORDS. I HOPE YOU'RE HAPPY.",
+   "description": "Phone voice says: 'WELL, WE'VE LOST THIS YEAR'S STUDENT RECORDS. I HOPE YOU'RE HAPPY.'"
+  },
+  {
+   "id": "p4_mom",
+   "label": "Mom on the phone, holding her mug down",
+   "parentId": "panel_4",
+   "role": "figure",
+   "box": [
+    0.757,
+    0.467,
+    0.806,
+    0.967
+   ],
+   "strokes": [
+    {
+     "points": [
+      [
+       0.797,
+       0.5
+      ],
+      [
+       0.802,
+       0.533
+      ],
+      [
+       0.803,
+       0.571
+      ],
+      [
+       0.8,
+       0.6
+      ],
+      [
+       0.793,
+       0.614
+      ],
+      [
+       0.783,
+       0.614
+      ],
+      [
+       0.775,
+       0.59
+      ],
+      [
+       0.772,
+       0.548
+      ],
+      [
+       0.772,
+       0.519
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.767,
+       0.614
+      ],
+      [
+       0.765,
+       0.557
+      ],
+      [
+       0.766,
+       0.505
+      ],
+      [
+       0.771,
+       0.476
+      ],
+      [
+       0.782,
+       0.471
+      ],
+      [
+       0.792,
+       0.476
+      ],
+      [
+       0.798,
+       0.495
+      ],
+      [
+       0.796,
+       0.505
+      ],
+      [
+       0.784,
+       0.5
+      ],
+      [
+       0.772,
+       0.519
+      ],
+      [
+       0.771,
+       0.61
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.773,
+       0.543
+      ],
+      [
+       0.777,
+       0.538
+      ],
+      [
+       0.785,
+       0.614
+      ],
+      [
+       0.781,
+       0.619
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.785,
+       0.614
+      ],
+      [
+       0.778,
+       0.771
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.778,
+       0.771
+      ],
+      [
+       0.758,
+       0.957
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.778,
+       0.771
+      ],
+      [
+       0.799,
+       0.962
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.784,
+       0.619
+      ],
+      [
+       0.771,
+       0.676
+      ],
+      [
+       0.779,
+       0.595
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.785,
+       0.619
+      ],
+      [
+       0.795,
+       0.719
+      ]
+     ],
+     "closed": false
+    },
+    {
+     "points": [
+      [
+       0.795,
+       0.719
+      ],
+      [
+       0.805,
+       0.719
+      ],
+      [
+       0.805,
+       0.771
+      ],
+      [
+       0.795,
+       0.771
+      ]
+     ],
+     "closed": true
+    },
+    {
+     "points": [
+      [
+       0.801,
+       0.7
+      ],
+      [
+       0.801,
+       0.676
+      ]
+     ],
+     "closed": false
+    }
+   ],
+   "embeddedText": "",
+   "description": "Stick-figure woman on the phone holding her mug at her side."
+  },
+  {
+   "id": "p4_text_mom",
+   "label": "Mom's reply",
+   "parentId": "panel_4",
+   "role": "text",
+   "box": [
+    0.835,
+    0.467,
+    0.988,
+    0.824
+   ],
+   "strokes": [],
+   "embeddedText": "AND I HOPE YOU'VE LEARNED TO SANITIZE YOUR DATABASE INPUTS.",
+   "description": "Mom replies: 'AND I HOPE YOU'VE LEARNED TO SANITIZE YOUR DATABASE INPUTS.'"
+  }
+ ]
+}
