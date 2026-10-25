@@ -1,0 +1,29 @@
+# Environment & Secrets (Never commit API keys or credentials)
+.env
+.env.*
+*.env
+local.properties
+*.keystore
+*.jks
+
+# Android & Gradle build outputs
+*.iml
+.gradle/
+build/
+app/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Python Orchestrator / Managed Agent virtualenvs & cache
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
