@@ -27,3 +27,6 @@ __pycache__/
 .venv/
 venv/
 .pytest_cache/
+
+# Managed-agent run logs (local only)
+agent-runs/
