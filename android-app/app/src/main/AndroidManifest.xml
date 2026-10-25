@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
+        android:name=".BrowserApplication"
         android:label="Monarch Browser"
         tools:replace="android:label,android:theme"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
@@ -15,5 +16,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".TactileActivity" android:exported="true" />
+        <provider
+            android:name=".XmlResource"
+            android:authorities="${applicationId}.XmlResource"
+            android:grantUriPermissions="true"
+            android:exported="true" />
     </application>
 </manifest>

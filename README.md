@@ -27,7 +27,7 @@
 | Built-in Monarch / KeySoft Capability | SDK Class / System Feature | How Our Browser Uses It |
 |---|---|---|
 | **Multi-Line Braille Reading & HTML Quick-Nav** | KeySoft Screen Reader + `WebView` + `KeysoftIME` | In **Text View**, `SelfBraillingWidget` is hidden (`View.GONE`) so KeySoft renders the webpage in 10×32 multi-line Braille for free, supports Pan Up/Down keys, handles Perkins Braille typing via `KeysoftIME`, and provides built-in single-letter HTML quick-nav (`B` = Button, `G` = Graphic, `H` = Heading, `L` = Link). |
-| **Hardware Key Routing (`ZoomIn/Out`, `RightDpad`, `Panning`, Braille Chords)** *(planned)* | `WriteCommandsXmlFileToInternalMemoryStorageExecutor` + `res/raw/commands.xml` | Today the viewer reads the keys that reach `dispatchKeyEvent` unregistered (see §4). Planned: registers `<context viewIdResourceName="SelfBraillingWidget">` key substitutions on startup so hardware `ZoomIn` (`168`), `ZoomOut` (`169`), Left D-Pad (`19..22`), Right D-Pad (`59|19..22`), `PanningUp/Down` (`92/93`), `Dots8` (`66`), and Braille chord shortcuts reach our activity. |
+| **Hardware Key Routing (`ZoomIn/Out`, `RightDpad`, `Panning`; chords planned)** | `WriteCommandsXmlFileToInternalMemoryStorageExecutor` + `res/raw/commands.xml` | Registers `<context viewIdResourceName="SelfBraillingWidget">` key substitutions on startup so hardware `ZoomIn` (`168`), `ZoomOut` (`169`), Left D-Pad (`19..22`), Right D-Pad (`59|19..22`), `PanningUp/Down` (`92/93`), `Dots8` (`66`), and Braille chord shortcuts reach our activity. |
 | **Native Space+M Context Menu** *(planned)* | `ContextMenuActivity` (`com.humanware.keysoftsdk.contextmenu`) | Provides the native Monarch `Space+M` menu listing all browser & tactile viewer commands with their Braille chord shortcuts. |
 | **Continuous 40Hz Finger Pin Polling + Point-and-Click** | `SelfBraillingManager.touchedPinCoordinates` + `SelfBraillingWidget` | Drives the 96×40 physical pins (`displayDots`), polls live finger coordinates `(x, y)` at 40Hz for **Finger-as-Cursor**, and receives `onDoubleTapAtBraillePosition` (finger + Action double-press). With SDK 0.1.131 the double-press point matches the polled finger, so no X offset is applied. |
 | **User-Profile Braille Translation** | `Translator` + `TranslationQuery` (`BrailleGrade.GRADE_UNSPECIFIED`) | Translates component labels into Unicode Braille (`\u2800..\u28FF`) using the user's active KeySoft language profile for our 4-row bottom **Braille Caption Bar** (rows 36–39) and **KeyBRF** exports. |
@@ -83,12 +83,13 @@ Single keys only for now; no chord is needed. Every key press is logged
 | Left D-Pad right or down, or Pan Down | → or ↓, Page Down | Next part at the same level |
 | Enter (dot 8) or Space | Space (Enter is kept by KeySoft) | Open the selected part (the one last touched or stepped to) |
 | Back (triangle) | Esc | Out one level; from the whole image, back to the web page |
-| Right D-Pad up | Keypad 8, `+` or `=` | Zoom 2× on the selected part |
-| Right D-Pad down | Keypad 2, `-` | Zoom out one step (same as Back while zoomed) |
-| Right D-Pad left / right | Keypad 4 / 6, Shift + arrow | Pan a quarter of the view (when zoomed) |
+| Zoom + (oval, bottom right) | `+` or `=` | Zoom 2× on the selected part |
+| Zoom − (oval, bottom left) | `-` | Zoom out one step (same as Back while zoomed) |
+| Right D-Pad | Shift + arrow, keypad 8/2/4/6 | Pan a quarter of the view (when zoomed) |
 
-The zoom ovals send nothing to an app until it registers them in `commands.xml`
-*(planned)*, so zoom is on the right D-Pad for now.
+The zoom ovals, D-Pads, Pan keys and dot 8 reach the viewer because the app registers
+them with KeySoft in `res/raw/commands.xml` (as MonarchIO does), scoped to the pin
+widget so web-page reading keys are unchanged.
 
 KeySoft may take some keys before the app sees them (MonarchTempest
 `docs/PHASE0-HARDWARE-FINDINGS.md`): Esc and character keys from a USB keyboard, and

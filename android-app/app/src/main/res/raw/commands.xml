@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Keys KeySoft passes to the tactile viewer (pattern from MonarchIO / the SDK demo).
+     Scoped to the pin widget so KeySoft's own reading keys stay unchanged on web pages. -->
+<keymapping>
+    <application package="org.monarch.browser">
+        <context viewIdResourceName="SelfBraillingWidget">
+            <action name="substitute">
+                <command commandId="action_zoom_in" finishComposing="true" param="168" string="Zoom in"><key>ZoomIn</key></command>
+                <command commandId="action_zoom_out" finishComposing="true" param="169" string="Zoom out"><key>ZoomOut</key></command>
+                <command commandId="prev_left" finishComposing="true" param="21" string="Previous part"><key>Left</key></command>
+                <command commandId="next_right" finishComposing="true" param="22" string="Next part"><key>Right</key></command>
+                <command commandId="prev_up" finishComposing="true" param="19" string="Previous part"><key>Up</key></command>
+                <command commandId="next_down" finishComposing="true" param="20" string="Next part"><key>Down</key></command>
+                <command commandId="pan_left" finishComposing="true" param="59|21" string="Pan left"><key>RightDpad_Left</key></command>
+                <command commandId="pan_right" finishComposing="true" param="59|22" string="Pan right"><key>RightDpad_Right</key></command>
+                <command commandId="pan_up" finishComposing="true" param="59|19" string="Pan up"><key>RightDpad_Up</key></command>
+                <command commandId="pan_down" finishComposing="true" param="59|20" string="Pan down"><key>RightDpad_Down</key></command>
+                <command commandId="panning_up" param="92" string="Previous part"><key>PanningUp</key></command>
+                <command commandId="panning_down" param="93" string="Next part"><key>PanningDown</key></command>
+                <command commandId="enter" param="66" string="Open part"><key>Dots8</key></command>
+            </action>
+        </context>
+    </application>
+</keymapping>
