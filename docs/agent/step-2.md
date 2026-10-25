@@ -22,3 +22,7 @@ ADDITION: include golden tests for the "tactile" section of
 test-sites/cases/xkcd-327.json using a synthetic 4-panel fixture: 4 closed panel
 rectangles, >= 1 blank pin column between adjacent panels, lettering not drawn as
 pins at 1x, no background pins, fill <= 0.25 at 1x, 2x, 4x; isolate Panel 3 re-fit.
+RasterContourCompiler must turn thick or hand-drawn ink strokes into single 1-pin
+centerlines (thinning/skeletonization), not trace both edges of each stroke. The
+synthetic fixture must contain stick figures and tables drawn with 3-4 px strokes,
+and tests must check the "drawings" and "strokes" items of the xkcd-327 case.

@@ -16,3 +16,11 @@ sandbox. Pass/fail: ./gradlew :tier2:test green.
 
 Push progress as you go. When green, open a draft PR into agent/step-3, write
 docs/agent/STEP4_REPORT.md. Reply with a 5-line summary and the PR URL.
+
+ADDITION (human decision, see LONG_TERM_PLAN.md §9): GeminiArgonProvider returns
+the "structured tactile graphic" schema in §9 (components with normalized
+centerline strokes), using structured JSON output and a 768 px downscaled image.
+Add a StrokeRenderer in tactile-core that rasterizes these strokes to 1-pin lines
+at any zoom/pan, applies the fill rule, and builds HitGrid/ComponentGraph from the
+components. Write results in the format documented in test-sites/judge.py so the
+human can grade them. Tests use recorded JSON fixtures shaped like xkcd-327.
