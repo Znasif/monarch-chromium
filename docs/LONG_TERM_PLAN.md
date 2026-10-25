@@ -205,3 +205,11 @@ source image, origin top-left):**
 Rules for the renderer: strokes are centerlines (one pin wide); `role: "text"`
 components are touch regions with no pins at 1x; smaller children win on overlap;
 fill <= 25% at every zoom, dropping the smallest/least important strokes first.
+
+## 10. Backlog (after the hackathon)
+
+- **Image index / cache.** Store every structured tactile graphic under the SHA-256
+  of the source image bytes (the same key Step 1 uses for edits), so the same image
+  is never sent to Argon twice. Lookup order: on-device store → optional remote
+  shared index → Argon. User edits stay a separate layer on top of the cached
+  graphic. A remote index must hold only derived tactile data, never the image.
