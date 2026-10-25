@@ -30,8 +30,8 @@ object PendingImage {
  * Full-screen tactile viewer. The canvas never changes while you feel it; only speech
  * and the Braille caption follow the finger (KeySoft touch polled as in MonarchIO's
  * MapFingerTracker).
- *  - finger + double-press of the Action button: select the part under the finger;
- *    the same again on the selected part opens it
+ *  - finger + double-press of the Action button: open the part under the finger at
+ *    the current level (on the overview, the panel the finger is in)
  *  - left D-pad: previous/next part; right D-pad (Shift + arrow): pan when zoomed
  *  - Enter (dot 8): open; Back: out; Zoom keys: zoom on the selected part
  */
@@ -45,6 +45,8 @@ class TactileActivity : AppCompatActivity() {
 
     private var graphic: GraphicScene? = null
     private val views = ArrayDeque<NormalizedBox>()
+    /** The part each zoomed view is showing; null for the whole image and plain zoom. */
+    private val containers = ArrayDeque<Int?>()
     private var scene: TactileScene? = null
     private var hits: HitGrid? = null
     private var graph: ComponentGraph? = null
@@ -63,14 +65,10 @@ class TactileActivity : AppCompatActivity() {
                 Log.d(TAG, "single tap $pointX,$pointY (ignored)")
             }
             override fun onDoubleTapAtBraillePosition(pointX: Int, pointY: Int) {
-                // KeySoft reports the point 3 pins right of the fingertip.
-                val id = partAt(pointX + FINGER_X_CORRECTION, pointY)
+                // With SDK 0.1.131 this point matches the polled finger, so no X correction.
+                val id = partAt(pointX, pointY)?.let { atCurrentLevel(it) }
                 Log.d(TAG, "action double-press $pointX,$pointY -> $id")
-                when {
-                    id == null -> beep()
-                    id == focusId -> enter()
-                    else -> focus(id)
-                }
+                if (id == null) beep() else { focus(id, speak = false); enter() }
             }
         }
 
@@ -96,6 +94,8 @@ class TactileActivity : AppCompatActivity() {
         graphic = g
         views.clear()
         views.addLast(g.overview)
+        containers.clear()
+        containers.addLast(null)
         render()
         focusId = scene!!.rootComponentIds.firstOrNull() ?: 0
         caption = labelOf(focusId)
@@ -154,8 +154,21 @@ class TactileActivity : AppCompatActivity() {
         if (id == touchedId) return
         touchedId = id
         if (id == 0) return  // open space and lifting are silent
+        atCurrentLevel(id)?.let { focusId = it }  // Enter opens what the finger is on
         Log.d(TAG, "touch ${point!!.x},${point.y} -> $id")
         say(spoken(id), captionText = labelOf(id))
+    }
+
+    /** Walks up from [id] to the part whose parent is the part being shown (Data Navigator level). */
+    private fun atCurrentLevel(id: Int): Int? {
+        val container = containers.lastOrNull()
+        var current: Int? = id
+        while (current != null) {
+            val parent = scene?.componentById(current)?.parentId
+            if (parent == container) return current
+            current = parent
+        }
+        return null
     }
 
     private fun partAt(x: Int, y: Int): Int? = hits?.lookup(x, y)?.takeIf { graphic?.partOf(it) != null }
@@ -174,6 +187,7 @@ class TactileActivity : AppCompatActivity() {
             return
         }
         views.addLast(g.fitToCanvas(part.box))
+        containers.addLast(focusId)
         render()
         focus(step.toComponentId)
     }
@@ -181,6 +195,7 @@ class TactileActivity : AppCompatActivity() {
     private fun back(): Boolean {
         if (views.size <= 1) return false
         views.removeLast()
+        containers.removeLast()
         val parent = graph?.stepBack(focusId)?.takeIf { it.moved }?.toComponentId ?: focusId
         render()
         focus(parent)
@@ -195,6 +210,7 @@ class TactileActivity : AppCompatActivity() {
         val cy = part?.let { (it.box.ymin + it.box.ymax) / 2 } ?: ((view.ymin + view.ymax) / 2)
         val w = view.width / 4; val h = view.height / 4
         views.addLast(g.fitToCanvas(NormalizedBox(ymin = cy - h, xmin = cx - w, ymax = cy + h, xmax = cx + w), margin = 0f))
+        containers.addLast(containers.last())
         render()
         say("Zoom ${1 shl (views.size - 1)} times")
     }
@@ -313,6 +329,5 @@ class TactileActivity : AppCompatActivity() {
         private const val TAG = "MonarchTactile"
         private const val POLL_MS = 25L
         private const val CANVAS_ROWS = 35
-        private const val FINGER_X_CORRECTION = -3
     }
 }
