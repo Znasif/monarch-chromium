@@ -6,8 +6,6 @@ import android.media.ToneGenerator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.VibrationEffect
-import android.os.Vibrator
 import android.util.Log
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
@@ -151,7 +149,6 @@ class TactileActivity : AppCompatActivity() {
         touchedId = id
         if (id == 0) return  // open space and lifting are silent
         Log.d(TAG, "touch ${point!!.x},${point.y} -> $id")
-        vibrate()
         say(spoken(id))
         handler.removeCallbacks(captionUpdate)
         handler.postDelayed(captionUpdate, CAPTION_DELAY_MS)
@@ -278,10 +275,6 @@ class TactileActivity : AppCompatActivity() {
     /** Only the caption rows differ, so the canvas pins stay as they are. */
     private fun setCaption(text: String) {
         if (text != caption) { caption = text; show() }
-    }
-
-    private fun vibrate() {
-        getSystemService(Vibrator::class.java)?.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
     private fun beep() = tone.startTone(ToneGenerator.TONE_PROP_BEEP, 80)
