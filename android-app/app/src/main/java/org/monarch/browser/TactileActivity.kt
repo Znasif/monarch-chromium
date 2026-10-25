@@ -39,6 +39,7 @@ class TactileActivity : AppCompatActivity() {
     private lateinit var manager: SelfBraillingManager
     private lateinit var widget: SelfBraillingWidget
     private lateinit var translator: Translator
+    private lateinit var sighted: SightedOverlay
     private var captionCells = ""
     private val handler = Handler(Looper.getMainLooper())
     private val tone by lazy { ToneGenerator(AudioManager.STREAM_NOTIFICATION, 60) }
@@ -58,7 +59,13 @@ class TactileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         manager = SelfBraillingManager(this).apply { bindService() }
         translator = Translator(this).apply { bindService() }
-        widget = SelfBraillingWidget(this).also { setContentView(it); it.isFocusableInTouchMode = true }
+        widget = SelfBraillingWidget(this).also { it.isFocusableInTouchMode = true }
+        sighted = SightedOverlay(this)
+        setContentView(android.widget.FrameLayout(this).apply {
+            addView(widget)
+            addView(sighted)
+        })
+        setSighted(true)
         widget.onSelfBraillingWidgetListener = object : SelfBraillingWidget.OnSelfBraillingWidgetListener {
             override fun onFocused() = show()
             override fun onSingleTapAtBraillePosition(pointX: Int, pointY: Int) {
@@ -74,6 +81,10 @@ class TactileActivity : AppCompatActivity() {
 
         val bytes = PendingImage.bytes ?: return finish()
         val title = PendingImage.title
+        sighted.image = runCatching {
+            val o = BitmapFactory.Options().apply { inSampleSize = 1 }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, o)
+        }.getOrNull()
         say("Loading tactile graphic. $title")
         thread {
             val result = runCatching {
@@ -121,6 +132,21 @@ class TactileActivity : AppCompatActivity() {
         val dots = grid.toByteGrid()
         runCatching { manager.displayDots(dots) }.onFailure { Log.w(TAG, "displayDots", it) }
         widget.refresh(dots)
+        sighted.scene = scene
+        sighted.view = views.lastOrNull()
+        sighted.focusId = focusId
+        sighted.caption = caption
+        sighted.invalidate()
+    }
+
+    /**
+     * Sighted view (MonarchTempest's sighted): the picture with pins drawn over it. The pin
+     * widget stays a drawn node (alpha 0.02) so KeySoft still delivers the Action double-press.
+     * NumLock on a USB keyboard switches to the plain pin mirror and back.
+     */
+    private fun setSighted(on: Boolean) {
+        sighted.visibility = if (on) android.view.View.VISIBLE else android.view.View.GONE
+        widget.alpha = if (on) 0.02f else 1f
     }
 
     @Volatile private var tracking = false
@@ -150,6 +176,8 @@ class TactileActivity : AppCompatActivity() {
     }
 
     private fun onFinger(point: android.graphics.Point?) {
+        val shown = point?.let { it.x to it.y }
+        if (shown != sighted.finger) { sighted.finger = shown; sighted.invalidate() }
         val id = point?.let { partAt(it.x, it.y) } ?: 0
         if (id == touchedId) return
         touchedId = id
@@ -245,6 +273,7 @@ class TactileActivity : AppCompatActivity() {
 
     private fun onKey(keyCode: Int): Boolean {
         return when (keyCode) {
+            KeyEvent.KEYCODE_NUM_LOCK -> { setSighted(sighted.visibility != android.view.View.VISIBLE); true }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> { enter(); true }
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> { if (!back()) finish(); true }
             KeyEvent.KEYCODE_ZOOM_IN, KeyEvent.KEYCODE_PLUS, KeyEvent.KEYCODE_EQUALS -> { zoomIn(); true }
@@ -286,6 +315,9 @@ class TactileActivity : AppCompatActivity() {
 
     private fun say(text: String, captionText: String = caption) {
         setCaption(captionText)
+        sighted.spoken = text
+        sighted.focusId = focusId
+        sighted.invalidate()
         runCatching { manager.announceText(text) }.onFailure { widget.announceForAccessibility(text) }
     }
 
