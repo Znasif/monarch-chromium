@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "monarch-chromium"
-include(":tactile-core")
+include(":tactile-core", ":tier2")

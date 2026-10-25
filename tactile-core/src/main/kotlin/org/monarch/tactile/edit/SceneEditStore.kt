@@ -220,7 +220,7 @@ class SceneEditStore(
 /**
  * Minimal recursive-descent JSON parser for pure-JVM serialization without third-party dependencies.
  */
-internal class SimpleJsonParser(private val src: String) {
+class SimpleJsonParser(private val src: String) {
     private var pos = 0
 
     fun parseValue(): Any? {
