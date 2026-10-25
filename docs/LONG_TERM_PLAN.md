@@ -135,7 +135,11 @@ this repo):
   `bbox [ymin,xmin,ymax,xmax]`, `parentId`, `childIds`). Use `thinking_level`.
   Do not use `temperature`, `top_p`, `top_k`, `thinking_budget`, or explicit
   `cached_content`.
-- **Explainer video (later, human-triggered):** `gemini-omni-1.1-flash` makes a
+- **Long explainer video (Step 5, human-triggered):** 4-6 minute 3Blue1Brown-style
+  video made with Manim plus at most 3 short Gemini Omni scenes, published as a GitHub
+  release and linked from the README. The hackathon submission is a separate
+  recording made by the human on the device. See docs/agent/step-5.md.
+- **Earlier plan, superseded:** `gemini-omni-1.1-flash` makes a
   1-minute 3Blue1Brown-style explainer of what was built, using real screenshots of
   the browser on real pages and the human's own footage of the Monarch. Order:
   storyboard and narration script (text) → human approval → human supplies footage →
