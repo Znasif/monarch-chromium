@@ -26,6 +26,6 @@ A case changes only by human decision. If code and case disagree, record it in
 ## Grading
 
 `../judge.py <case-id> <result.json>` runs exact checks locally, then asks
-`claude-sonnet-5-5` to grade the remaining items within these tolerances, using
+`claude-sonnet-5-5` (via `claude -p`, using the local Claude Code login) to grade the remaining items within these tolerances, using
 the source image and a picture of the generated pins. Add `--no-llm` for exact
 checks only. Reports go to `reports/` (git-ignored).

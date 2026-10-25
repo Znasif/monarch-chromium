@@ -21,13 +21,14 @@ Result file format (written by the local app and by the agent's modules):
            "isolate:p3": [...], "zoom2x": [...]}
 }
 
-Needs ANTHROPIC_API_KEY (sonnet) or GEMINI_API_KEY (argon) in .env or the environment.
+Sonnet grading uses the local Claude Code login (`claude` CLI); Argon needs GEMINI_API_KEY.
 """
 
 import argparse
 import base64
 import io
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -38,7 +39,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 CANVAS_ROWS = 35
 COLS = 96
-SONNET_MODEL = "claude-sonnet-5-5"  # local grading
+SONNET_MODEL = "claude-sonnet-5-5"  # local grading via `claude -p`
 ARGON_MODEL = "gemini-4-argon"  # agent sandbox and production grading
 
 VERDICTS_SCHEMA = {
@@ -159,28 +160,45 @@ def grading_parts(case, result, checks):
 
 
 def grade_sonnet(parts):
-    """Local grading (ANTHROPIC_API_KEY)."""
-    import anthropic
-
-    content = []
-    for part in parts:
+    """Local grading through the Claude Code CLI (`claude -p`), using the local
+    Claude Code login; no API key. Images are written to files that the model
+    opens with the Read tool, since `claude -p` takes text on stdin."""
+    image_dir = HERE / "reports" / "_judge_images"
+    image_dir.mkdir(parents=True, exist_ok=True)
+    prompt = []
+    for n, part in enumerate(parts):
         if part[0] == "text":
-            content.append({"type": "text", "text": part[1]})
+            prompt.append(part[1])
         else:
-            content.append({"type": "image", "source": {"type": "base64", "media_type": part[2],
-                                                        "data": base64.b64encode(part[1]).decode()}})
-    response = anthropic.Anthropic().beta.messages.create(
-        model=SONNET_MODEL,
-        max_tokens=16000,
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
-        system=SYSTEM,
-        output_config={"effort": "medium", "format": {"type": "json_schema", "schema": VERDICTS_SCHEMA}},
-        messages=[{"role": "user", "content": content}],
-    )
-    if response.stop_reason == "refusal":
-        sys.exit(f"judge refused: {response.stop_details}")
-    return json.loads(next(block.text for block in response.content if block.type == "text"))
+            path = image_dir / f"{n:02d}.{'png' if part[2] == 'image/png' else 'jpg'}"
+            path.write_bytes(part[1])
+            prompt.append(f"[Open this image with the Read tool: {path}]")
+    prompt.append("Open every image listed above before grading.")
+
+    command = ["claude", "-p", "--model", SONNET_MODEL,
+               "--append-system-prompt", SYSTEM,
+               "--allowedTools", "Read", "--add-dir", str(image_dir),
+               "--output-format", "json", "--json-schema", json.dumps(VERDICTS_SCHEMA)]
+    last_error = "no attempt"
+    for _ in range(2):  # one retry on a failed run or unparsable output
+        try:
+            run = subprocess.run(command, input="\n\n".join(prompt), capture_output=True,
+                                 text=True, timeout=900, cwd=HERE)
+        except subprocess.TimeoutExpired:
+            last_error = "timed out after 900 s"
+            continue
+        if run.returncode != 0:
+            last_error = f"claude exited {run.returncode}: {run.stderr.strip()[:300]}"
+            continue
+        try:
+            envelope = json.loads(run.stdout)
+            verdict = envelope.get("structured_output") or json.loads(envelope["result"])
+            if "items" in verdict:
+                return verdict
+            last_error = "verdict has no items"
+        except (json.JSONDecodeError, KeyError, TypeError) as error:
+            last_error = f"unparsable output: {error}"
+    sys.exit(f"sonnet grader failed: {last_error}")
 
 
 def grade_argon(parts):

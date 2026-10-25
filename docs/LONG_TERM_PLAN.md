@@ -179,8 +179,9 @@ Mounted under `/workspace/ref/` by `scripts/agent.py`, not committed:
 3. **Testing:** ground truth is the human-reviewed case files in
    `test-sites/cases/`. `test-sites/judge.py` runs exact checks (fill, box IoU,
    counts) and asks `claude-sonnet-5-5` to grade the rest within the stated
-   tolerances, using the source image and a picture of the generated pins. Judge
-   runs need `ANTHROPIC_API_KEY`, so they run locally, not in the agent sandbox.
+   tolerances, using the source image and a picture of the generated pins.
+   Locally it runs Sonnet through `claude -p` (Claude Code login, no API key); in
+   the agent sandbox and production it uses `--grader argon` (Gemini key via proxy).
    Modules must be able to write the result format documented in `judge.py`.
 
 **Structured tactile graphic (model output, all coordinates normalized 0..1 of the
