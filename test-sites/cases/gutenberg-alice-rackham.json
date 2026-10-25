@@ -2,5 +2,223 @@
   "id": "gutenberg-alice-rackham",
   "url": "https://www.gutenberg.org/cache/epub/28885/pg28885-images.html",
   "license": "Public domain in the USA (Project Gutenberg license); snapshot kept local only",
-  "images": {}
+  "images": {
+    "caterpillar.jpg": "https://www.gutenberg.org/cache/epub/28885/images/p0050-insert2.jpg",
+    "cheshire.png": "https://www.gutenberg.org/cache/epub/28885/images/p0075-image.png"
+  },
+  "kind": "HTML book with 42 illustrations: full-colour watercolour plates and pen-and-ink drawings, each with alt text",
+  "textView": {
+    "requiredButtons": [
+      {
+        "image": "p0050-insert2.jpg",
+        "labelIncludes": [
+          "Advice from a Caterpillar"
+        ],
+        "labelSource": "alt"
+      },
+      {
+        "image": "p0075-image.png",
+        "labelIncludes": [
+          "Cheshire cat"
+        ],
+        "labelSource": "alt"
+      }
+    ],
+    "minButtons": 38,
+    "skip": [
+      "drop-cap letter images such as a.png (decorative initials, about 70 px): they become part of the text, not buttons"
+    ],
+    "notes": "Drop-cap images carry a single letter as alt ('A'); the paragraph must read as one word ('Alice'), not 'A' + 'lice'."
+  },
+  "tactile": {
+    "coordinateSpace": "source pixels [x0, y0, x1, y1] of each image; tolerance 15 px",
+    "caterpillar": {
+      "sourceSize": [
+        337,
+        500
+      ],
+      "overview1x": {
+        "maxFill": 0.2,
+        "shapes": [
+          "Alice standing at lower left as an outline: hair, dress, arms, legs",
+          "the large mushroom: cap outline and stem outline",
+          "the Caterpillar on top of the cap with the hookah and its tube",
+          "smaller mushrooms in the background as simple cap outlines"
+        ],
+        "drop": [
+          "watercolour washes and shading",
+          "tree-root and ground textures",
+          "smoke wisps",
+          "the artist's signature"
+        ]
+      },
+      "isolateCaterpillar": {
+        "expect": "body segments, head with spectacles, arms holding the hookah tube, the hookah as a separate object; fill <= 0.25"
+      }
+    },
+    "cheshire": {
+      "sourceSize": [
+        400,
+        258
+      ],
+      "overview1x": {
+        "maxFill": 0.2,
+        "shapes": [
+          "the cat's head with eyes and the wide grin as the clearest shape",
+          "the body as an outline lying along the branches",
+          "the main branches as a few thick lines"
+        ],
+        "drop": [
+          "fine twigs and fur strokes (the tangle must not become a solid mass of pins)"
+        ],
+        "deviceCheck": "By touch: the grin must be findable within a few seconds without the twigs getting in the way."
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "caterpillar-plate",
+      "label": "Advice from a Caterpillar",
+      "role": "figure",
+      "box": [
+        0,
+        0,
+        337,
+        500
+      ],
+      "image": "caterpillar.jpg",
+      "children": [
+        {
+          "label": "Alice",
+          "role": "figure",
+          "box": [
+            45,
+            225,
+            125,
+            470
+          ]
+        },
+        {
+          "label": "Large mushroom",
+          "role": "object",
+          "box": [
+            110,
+            200,
+            320,
+            495
+          ],
+          "parts": [
+            "cap",
+            "stem"
+          ]
+        },
+        {
+          "label": "Caterpillar smoking a hookah",
+          "role": "figure",
+          "box": [
+            195,
+            100,
+            300,
+            285
+          ],
+          "parts": [
+            "body",
+            "head",
+            "hookah"
+          ]
+        },
+        {
+          "label": "Background mushrooms",
+          "role": "object",
+          "box": [
+            15,
+            75,
+            135,
+            235
+          ]
+        },
+        {
+          "label": "Signature: Arthur Rackham 1907",
+          "role": "text",
+          "box": [
+            240,
+            455,
+            315,
+            478
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cheshire-drawing",
+      "label": "Cheshire cat in a tree",
+      "role": "figure",
+      "box": [
+        0,
+        0,
+        400,
+        258
+      ],
+      "image": "cheshire.png",
+      "children": [
+        {
+          "label": "Cheshire Cat",
+          "role": "figure",
+          "box": [
+            100,
+            40,
+            335,
+            195
+          ],
+          "parts": [
+            "head",
+            "eyes",
+            "grin",
+            "body",
+            "tail"
+          ]
+        },
+        {
+          "label": "Tree branches",
+          "role": "object",
+          "box": [
+            0,
+            10,
+            400,
+            250
+          ]
+        }
+      ]
+    }
+  ],
+  "componentChecks": [
+    "inside the plate, Alice and the Caterpillar are separate figures; the hookah is a child of the Caterpillar",
+    "in the drawing, the cat is a child component separate from the branches even though they overlap"
+  ],
+  "navigation": [
+    {
+      "from": "Alice",
+      "key": "right",
+      "to": "Large mushroom"
+    },
+    {
+      "from": "Large mushroom",
+      "key": "up",
+      "to": "Caterpillar smoking a hookah"
+    }
+  ],
+  "editing": {
+    "tree": [
+      {
+        "action": "split 'Large mushroom' into 'Cap' and 'Stem'",
+        "expect": "two components"
+      }
+    ],
+    "pins": [
+      {
+        "action": "erase the twigs over the cat's face",
+        "expect": "the erasure is kept and the face is clearer after reopening"
+      }
+    ]
+  }
 }

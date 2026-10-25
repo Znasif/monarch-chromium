@@ -2,5 +2,233 @@
   "id": "loc-tribune-1912-04-16",
   "url": "https://www.loc.gov/chroniclingamerica/lccn/sn83030214/1912-04-16/ed-1/seq-1/",
   "license": "Public domain (Library of Congress, Chronicling America); snapshot kept local only",
-  "images": {}
+  "images": {
+    "page_12pct.jpg": "https://tile.loc.gov/image-services/iiif/service:ndnp:dlc:batch_dlc_keady_ver01:data:sn83030214:00206531526:1912041601:0303/full/pct:12.5/0/default.jpg"
+  },
+  "imagesVia": "official loc.gov JSON API (?fo=json) and IIIF image service; the HTML page shows a bot check to headless browsers, which we do not bypass",
+  "ocrReference": "snapshots/<id>/images/ocr_alto.xml (the Library's own OCR; contains errors such as '1915' for 1912)",
+  "kind": "historic newspaper front page scan: masthead, banner headline, map diagram, two halftone photos, stats table, 7 dense text columns",
+  "textView": {
+    "deviceCheckOnly": "the loc.gov viewer could not be captured headless (bot check); on the Monarch, check that the page image becomes an 'Explore tactile image' button and that 'Read page text' offers the text",
+    "pageText": {
+      "headline": "1,340 PERISH AS TITANIC SINKS; ONLY 886, MOSTLY WOMEN AND CHILDREN, RESCUED",
+      "headlineMatch": "exact (ignoring case and punctuation)",
+      "bodyMatch": "loose: at most 10% word differences against the Library OCR after fixing its obvious errors",
+      "readingOrder": "masthead, date line, headline, then columns left to right, each top to bottom; figure captions read with their figures"
+    }
+  },
+  "tactile": {
+    "sourceSize": [
+      782,
+      1190
+    ],
+    "coordinateSpace": "pixels of the 12.5% IIIF image [x0, y0, x1, y1]; tolerance 15 px",
+    "pageOverview1x": {
+      "expect": "three figures (map, captain photo, ship photo) and the stats table as outlined regions in place; masthead, headline and columns are touch regions without pins",
+      "maxFill": 0.15,
+      "deviceCheck": "By touch: find the map at the top center and the two photos side by side below it."
+    },
+    "isolateMap": {
+      "maxFill": 0.25,
+      "shapes": [
+        "coastline of North America and Newfoundland as one continuous outline",
+        "the Titanic's sinking position as a distinct small closed marker",
+        "other ships (Olympic, Carpathia, Parisian, Virginian, Californian, Baltic) as small markers",
+        "ship routes toward the wreck as lines (dashed lines become solid 1-pin lines)"
+      ],
+      "drop": [
+        "all printed labels as pins (they become component labels)",
+        "ship drawings beyond a marker",
+        "ocean hatching"
+      ]
+    },
+    "isolateShipPhoto": {
+      "maxFill": 0.25,
+      "shapes": [
+        "hull outline with the waterline",
+        "four funnels",
+        "two masts",
+        "bow pointing right"
+      ],
+      "drop": [
+        "sea texture, smoke and halftone dots"
+      ]
+    },
+    "isolateCaptainPhoto": {
+      "maxFill": 0.25,
+      "shapes": [
+        "the captain's outline: cap, bearded face, coat",
+        "the bridge window frame behind him"
+      ],
+      "drop": [
+        "halftone shading"
+      ]
+    }
+  },
+  "components": [
+    {
+      "id": "masthead",
+      "label": "Masthead: New-York Tribune",
+      "role": "text",
+      "box": [
+        120,
+        25,
+        670,
+        75
+      ]
+    },
+    {
+      "id": "headline",
+      "label": "Headline",
+      "role": "text",
+      "box": [
+        10,
+        85,
+        775,
+        175
+      ],
+      "embeddedText": "1,340 PERISH AS TITANIC SINKS; ONLY 886, MOSTLY WOMEN AND CHILDREN, RESCUED"
+    },
+    {
+      "id": "map",
+      "label": "Map: position of the Titanic when she struck the iceberg, and liners rushing to help",
+      "role": "figure",
+      "box": [
+        125,
+        195,
+        550,
+        420
+      ],
+      "children": [
+        {
+          "label": "Coastline: Halifax, New York, Cape Race",
+          "role": "object"
+        },
+        {
+          "label": "Titanic: struck an iceberg, sank 2:20 a.m.",
+          "role": "object"
+        },
+        {
+          "label": "Carpathia",
+          "role": "object"
+        },
+        {
+          "label": "Olympic",
+          "role": "object"
+        },
+        {
+          "label": "Parisian",
+          "role": "object"
+        },
+        {
+          "label": "Virginian",
+          "role": "object"
+        },
+        {
+          "label": "Californian",
+          "role": "object"
+        },
+        {
+          "label": "Baltic",
+          "role": "object"
+        }
+      ]
+    },
+    {
+      "id": "captain",
+      "label": "Photo: Captain E. J. Smith on the bridge of the Titanic",
+      "role": "figure",
+      "box": [
+        125,
+        425,
+        335,
+        710
+      ]
+    },
+    {
+      "id": "ship",
+      "label": "Photo: the Titanic, the greatest steamship ever built",
+      "role": "figure",
+      "box": [
+        340,
+        425,
+        550,
+        710
+      ]
+    },
+    {
+      "id": "stats",
+      "label": "Table: passengers and crew, saved and missing",
+      "role": "table",
+      "box": [
+        555,
+        375,
+        780,
+        445
+      ]
+    },
+    {
+      "id": "colLeft",
+      "label": "Column: Crowd besieges White Star office",
+      "role": "text",
+      "box": [
+        5,
+        190,
+        120,
+        1185
+      ]
+    },
+    {
+      "id": "colRight",
+      "label": "Column: Survivors eight hours in boats",
+      "role": "text",
+      "box": [
+        555,
+        190,
+        780,
+        1185
+      ]
+    }
+  ],
+  "componentChecks": [
+    "map, captain, ship and stats are separate top-level components",
+    "map children are ships and the coastline, each a touch region with its printed label",
+    "text columns produce no pins at 1x"
+  ],
+  "navigation": [
+    {
+      "from": "headline",
+      "key": "down",
+      "to": "map"
+    },
+    {
+      "from": "captain",
+      "key": "right",
+      "to": "ship"
+    },
+    {
+      "from": "map",
+      "key": "down",
+      "to": "captain or ship (nearest)"
+    },
+    {
+      "from": "map",
+      "key": "enter",
+      "to": "first map child"
+    }
+  ],
+  "editing": {
+    "tree": [
+      {
+        "action": "merge 'Olympic' and 'Baltic' into 'Other liners'",
+        "expect": "one component, both markers"
+      }
+    ],
+    "pins": [
+      {
+        "action": "draw the Carpathia's route to the wreck",
+        "expect": "kept after reopening, attached to the map"
+      }
+    ]
+  }
 }

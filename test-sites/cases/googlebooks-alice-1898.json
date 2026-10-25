@@ -1,6 +1,26 @@
 {
   "id": "googlebooks-alice-1898",
-  "url": "https://books.google.com/books?id=CLoNAAAAYAAJ",
+  "url": "https://books.google.com/books?id=CLoNAAAAYAAJ&pg=PA8",
   "license": "Public domain scan; Google Books terms: no saved copies leave this machine",
-  "images": {}
+  "images": {},
+  "settleMs": 8000,
+  "sameScanAs": "archive-alice-1898 (same 1898 Google scan; page 8)",
+  "kind": "the same scanned page inside the Google Books reader: continuous scroll of page images (pages 7, 8, 9 loaded together), labeled only 'Page'",
+  "textView": {
+    "requiredButtons": [
+      {
+        "image": "page image with pg=PA8",
+        "labelIncludes": [
+          "page"
+        ],
+        "labelSource": "alt is only 'Page'; the label adds the page's position in the reader ('page 2 of 3 loaded') — never parse the URL (no site rules)"
+      }
+    ],
+    "lazyPages": "pages load as the user scrolls; each newly loaded page gets its button",
+    "pageText": "same expectation and embeddedText as archive-alice-1898.textView.pageText"
+  },
+  "tactile": "same expectations as archive-alice-1898.tactile (the scan is identical; source size differs: 1025x1504)",
+  "components": "same as archive-alice-1898, boxes scaled by 1025/1455",
+  "policy": "Google Books page images are fetched only by the user's own browsing; the snapshot stays on this machine and the page image is not saved by capture.mjs",
+  "consistencyCheck": "results for this case and archive-alice-1898 should agree (same components and text); a large difference is a failure of one of them"
 }

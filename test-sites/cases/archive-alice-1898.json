@@ -1,6 +1,228 @@
 {
   "id": "archive-alice-1898",
-  "url": "https://archive.org/details/alicesadventure00tenngoog",
+  "url": "https://archive.org/details/alicesadventure00tenngoog/page/n34/mode/1up",
   "license": "Public domain (archive.org: NOT_IN_COPYRIGHT); snapshot kept local only",
-  "images": {}
+  "images": {
+    "page.jpg": "https://archive.org/download/alicesadventure00tenngoog/page/n34_w800.jpg"
+  },
+  "kind": "scanned book page (1898 Tenniel edition, page 8): printed text wrapping around an engraving, plus scan noise and a 'Digitized by Google' watermark",
+  "textView": {
+    "requiredButtons": [
+      {
+        "image": "BookReader page image (n34)",
+        "labelIncludes": [
+          "page 8"
+        ],
+        "labelSource": "the viewer's generic alt ('Book page image') plus the page number the viewer shows; the book title comes from the page <title>"
+      }
+    ],
+    "pageText": {
+      "requirement": "the printed text is made readable in Text View (model OCR on user action), in reading order, with line-end hyphens joined",
+      "runningHead": "8 DOWN THE",
+      "embeddedText": "doors of the hall; but, alas! either the locks were too large, or the key was too small, but at any rate it would not open any of them. However, on the second time round, she came upon a low curtain she had not noticed before, and behind it was a little door about fifteen inches high: she tried the little golden key in the lock, and to her great delight it fitted! Alice opened the door and found that it led into a small passage, not much larger than a rat-hole: she knelt down and looked along the passage into the loveliest garden you ever saw. How she longed to get out of that dark hall, and wander about among those beds of bright",
+      "notes": "'be-fore' and 'be-hind' are hyphenated across lines in the narrow column beside the figure and must read 'before', 'behind'. The watermark is not page text."
+    },
+    "figureButton": "the engraving becomes its own 'Explore tactile image' button placed in the text where it appears (after 'she came')"
+  },
+  "tactile": {
+    "sourceSize": [
+      1455,
+      2159
+    ],
+    "coordinateSpace": "source pixels [x0, y0, x1, y1]; tolerance 40 px",
+    "pageOverview1x": {
+      "expect": "the figure as an outlined component in its place on the page; text blocks are touch regions with no pins; watermark and scan specks have no pins",
+      "maxFill": 0.15
+    },
+    "overview1x": {
+      "target": "the figure alone (opened from its button)",
+      "maxFill": 0.2,
+      "shapes": [
+        "Alice as an outline: long hair, head bent forward, puffed-sleeve dress with apron, one arm reaching to the curtain, legs and shoes",
+        "the curtain as a tall outline with a few long vertical fold lines, pulled aside by her hand",
+        "the little door as a small closed rectangle with a knob dot, behind the curtain at floor level",
+        "a floor line under her feet"
+      ],
+      "drop": [
+        "all cross-hatching and engraved shading",
+        "the engraver's signature (bottom left) and Tenniel's monogram",
+        "scan specks"
+      ],
+      "deviceCheck": "By touch: find Alice's reaching hand, follow it to the curtain, and find the little door below it."
+    },
+    "isolateAlice": {
+      "action": "Enter on Alice",
+      "expect": "hair, face profile, arms, dress, apron and legs as separate, distinguishable outlines; fill <= 0.25"
+    },
+    "zoom": {
+      "levels": [
+        2,
+        4
+      ],
+      "expect": "more fold lines of the curtain and dress appear; hatching still never becomes pins"
+    }
+  },
+  "components": [
+    {
+      "id": "head",
+      "label": "Running head: page 8, 'Down the'",
+      "role": "text",
+      "box": [
+        216,
+        184,
+        853,
+        227
+      ]
+    },
+    {
+      "id": "text1",
+      "label": "Text before the figure",
+      "role": "text",
+      "box": [
+        216,
+        270,
+        1280,
+        551
+      ]
+    },
+    {
+      "id": "figure",
+      "label": "Engraving: Alice pulls aside a low curtain and finds a little door",
+      "role": "figure",
+      "box": [
+        227,
+        610,
+        918,
+        1312
+      ],
+      "children": [
+        {
+          "label": "Alice",
+          "role": "figure",
+          "box": [
+            227,
+            610,
+            560,
+            1260
+          ],
+          "parts": [
+            "hair",
+            "head",
+            "arms",
+            "dress",
+            "apron",
+            "legs",
+            "shoes"
+          ]
+        },
+        {
+          "label": "Curtain",
+          "role": "object",
+          "box": [
+            470,
+            630,
+            918,
+            1240
+          ]
+        },
+        {
+          "label": "Little door",
+          "role": "object",
+          "box": [
+            783,
+            1069,
+            832,
+            1188
+          ]
+        },
+        {
+          "label": "Floor",
+          "role": "object"
+        }
+      ]
+    },
+    {
+      "id": "text2",
+      "label": "Text beside the figure",
+      "role": "text",
+      "box": [
+        967,
+        562,
+        1280,
+        1339
+      ]
+    },
+    {
+      "id": "text3",
+      "label": "Text after the figure",
+      "role": "text",
+      "box": [
+        216,
+        1350,
+        1280,
+        1836
+      ]
+    },
+    {
+      "id": "watermark",
+      "label": "Watermark: Digitized by Google",
+      "role": "other",
+      "box": [
+        956,
+        1998,
+        1253,
+        2063
+      ]
+    }
+  ],
+  "componentChecks": [
+    "reading order: head, text1, text2, figure button at its place, text3; watermark last or omitted",
+    "text components have no pins at 1x",
+    "the little door is a child of the figure and lies inside the curtain's box"
+  ],
+  "navigation": [
+    {
+      "from": "text1",
+      "key": "down",
+      "to": "figure"
+    },
+    {
+      "from": "figure",
+      "key": "right",
+      "to": "text2"
+    },
+    {
+      "from": "figure",
+      "key": "enter",
+      "to": "Alice"
+    },
+    {
+      "from": "Alice",
+      "key": "right",
+      "to": "Curtain"
+    },
+    {
+      "from": "Curtain",
+      "key": "down",
+      "to": "Little door"
+    }
+  ],
+  "editing": {
+    "tree": [
+      {
+        "action": "move 'Little door' out of the curtain group to be a direct child of the figure (if the model nested it)",
+        "expect": "Enter on the figure lists Alice, Curtain, Little door, Floor"
+      },
+      {
+        "action": "rename 'Curtain' to 'Low curtain'",
+        "expect": "new label everywhere, including KeyBRF export"
+      }
+    ],
+    "pins": [
+      {
+        "action": "draw a line from Alice's hand to the door",
+        "expect": "kept after reopening, attached to the figure"
+      }
+    ]
+  }
 }

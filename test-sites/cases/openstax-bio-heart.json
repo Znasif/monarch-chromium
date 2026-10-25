@@ -2,5 +2,183 @@
   "id": "openstax-bio-heart",
   "url": "https://openstax.org/books/biology-2e/pages/40-3-mammalian-heart-and-blood-vessels",
   "license": "CC BY 4.0 (OpenStax Biology 2e); snapshot kept local only",
-  "images": {}
+  "images": {
+    "fig40_11.webp": "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/829a536bb7154bdd0b23402c1f8762b776673f99"
+  },
+  "kind": "textbook page with labeled medical illustrations (transparent-background WebP), long alt text and numbered figure captions",
+  "textView": {
+    "requiredButtons": [
+      {
+        "image": "Figure 40.11",
+        "labelIncludes": [
+          "Figure 40.11",
+          "heart"
+        ],
+        "labelSource": "figure number and caption from <figcaption>; the long alt text (a full description) is offered as the image's description, not crammed into the button label"
+      }
+    ],
+    "minButtons": 3,
+    "skip": [
+      "OpenStax logo and interface icons"
+    ]
+  },
+  "tactile": {
+    "sourceSize": [
+      1043,
+      1296
+    ],
+    "coordinateSpace": "source pixels [x0, y0, x1, y1]; tolerance 30 px",
+    "preprocess": "the image has a transparent background and black label text: composite onto WHITE before sending to the model or tracing (on black, all labels vanish)",
+    "overview1x": {
+      "maxFill": 0.2,
+      "shapes": [
+        "panel (a): heart cross-section outline with the four chambers, septum and the great vessels on top",
+        "the inset: a small rectangle on the heart wall and an arrow to a magnified block showing wall layers as parallel bands",
+        "panel (b): the outside of the heart as an outline with the coronary vessels as branching lines"
+      ],
+      "drop": [
+        "label text and leader lines (labels become components)",
+        "blood-flow arrows at 1x",
+        "muscle-fibre texture in the inset",
+        "colour (outline only; red/blue named in labels)"
+      ]
+    },
+    "isolatePanelA": {
+      "expect": "chambers, valves and vessels as separate outlined regions; fill <= 0.25"
+    },
+    "isolateInset": {
+      "expect": "the wall layers as 3-4 parallel bands, each a touch region with its label"
+    }
+  },
+  "components": [
+    {
+      "id": "panelA",
+      "label": "(a) Parts of the heart: chambers, valves and great vessels",
+      "role": "figure",
+      "box": [
+        93,
+        46,
+        671,
+        579
+      ],
+      "children": [
+        {
+          "label": "Superior vena cava"
+        },
+        {
+          "label": "Inferior vena cava"
+        },
+        {
+          "label": "Aorta"
+        },
+        {
+          "label": "Pulmonary artery"
+        },
+        {
+          "label": "Right atrium"
+        },
+        {
+          "label": "Right ventricle"
+        },
+        {
+          "label": "Left atrium"
+        },
+        {
+          "label": "Left ventricle"
+        },
+        {
+          "label": "Tricuspid valve"
+        },
+        {
+          "label": "Pulmonary valve"
+        },
+        {
+          "label": "Mitral (bicuspid) valve"
+        },
+        {
+          "label": "Aortic valve"
+        }
+      ]
+    },
+    {
+      "id": "inset",
+      "label": "Heart wall layers (magnified)",
+      "role": "figure",
+      "box": [
+        729,
+        370,
+        1030,
+        648
+      ],
+      "children": [
+        {
+          "label": "Pericardium"
+        },
+        {
+          "label": "Epicardium"
+        },
+        {
+          "label": "Myocardium"
+        },
+        {
+          "label": "Endocardium"
+        }
+      ]
+    },
+    {
+      "id": "panelB",
+      "label": "(b) Coronary arteries and veins on the surface of the heart",
+      "role": "figure",
+      "box": [
+        197,
+        671,
+        879,
+        1284
+      ],
+      "children": [
+        {
+          "label": "Coronary arteries"
+        },
+        {
+          "label": "Coronary veins"
+        }
+      ]
+    }
+  ],
+  "componentChecks": [
+    "children are labelled from the figure's own printed labels (after white compositing), matched to shapes by their leader lines",
+    "the inset is linked to the small rectangle on the heart wall it magnifies (description or relation)",
+    "same anatomy as wikipedia-heart: labels should agree across the two cases"
+  ],
+  "navigation": [
+    {
+      "from": "panelA",
+      "key": "right",
+      "to": "inset"
+    },
+    {
+      "from": "panelA",
+      "key": "down",
+      "to": "panelB"
+    },
+    {
+      "from": "panelA",
+      "key": "enter",
+      "to": "first child of panelA"
+    }
+  ],
+  "editing": {
+    "tree": [
+      {
+        "action": "group the four valves under a new component 'Valves'",
+        "expect": "Enter on Valves lists all four"
+      }
+    ],
+    "pins": [
+      {
+        "action": "draw the path of blood through the right side",
+        "expect": "kept after reopening"
+      }
+    ]
+  }
 }
