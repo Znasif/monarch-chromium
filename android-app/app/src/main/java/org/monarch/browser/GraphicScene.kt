@@ -157,6 +157,9 @@ class GraphicScene(json: String, private val imageWidth: Int, private val imageH
         if (x in 0 until PinGrid.WIDTH && y in 0 until PinGrid.CANVAS_HEIGHT) out += PinGrid.packCanvasCoord(x, y)
     }
 
+    /** optString turns a JSON null into the word "null". */
+    private fun JSONObject.text(name: String): String = if (isNull(name)) "" else optString(name)
+
     private fun parse(json: String): List<GraphicPart> {
         val array = JSONObject(json).getJSONArray("components")
         return (0 until array.length()).map { i ->
@@ -165,9 +168,9 @@ class GraphicScene(json: String, private val imageWidth: Int, private val imageH
             val strokes = c.optJSONArray("strokes")
             GraphicPart(
                 key = c.getString("id"),
-                label = c.optString("label"),
+                label = c.text("label"),
                 parentKey = c.optString("parentId").takeIf { !c.isNull("parentId") && it.isNotEmpty() },
-                role = c.optString("role", "other"),
+                role = c.text("role").ifEmpty { "other" },
                 box = NormalizedBox(
                     ymin = b.getDouble(1).toFloat(), xmin = b.getDouble(0).toFloat(),
                     ymax = b.getDouble(3).toFloat(), xmax = b.getDouble(2).toFloat(),
@@ -180,8 +183,8 @@ class GraphicScene(json: String, private val imageWidth: Int, private val imageH
                         floatArrayOf(pt.getDouble(0).toFloat(), pt.getDouble(1).toFloat())
                     } to stroke.optBoolean("closed")
                 },
-                embeddedText = c.optString("embeddedText"),
-                description = c.optString("description"),
+                embeddedText = c.text("embeddedText"),
+                description = c.text("description"),
             )
         }
     }

@@ -53,6 +53,8 @@ class BrowserActivity : AppCompatActivity() {
             addView(web, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
         })
         go(intent.dataString ?: home())
+        // Test hook: `am start ... --es image <url> --es title <text>` opens a picture directly.
+        intent.getStringExtra("image")?.let { Bridge().openImage(it, intent.getStringExtra("title") ?: "") }
     }
 
     private fun home(): String =
