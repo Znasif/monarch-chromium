@@ -261,6 +261,12 @@ class TactileActivity : AppCompatActivity() {
         if (event.action != KeyEvent.ACTION_DOWN) return super.dispatchKeyEvent(event)
         val pan = pendingShift || event.isShiftPressed
         val handled = when (keyCode) {
+            // The right D-pad arrives as keypad keys; the zoom ovals never reach an app
+            // without commands.xml, so the right D-pad zooms (up/down) and pans (left/right).
+            KeyEvent.KEYCODE_NUMPAD_8 -> zoomIn()
+            KeyEvent.KEYCODE_NUMPAD_2 -> { if (!back()) beep() }
+            KeyEvent.KEYCODE_NUMPAD_4 -> pan(-1, 0)
+            KeyEvent.KEYCODE_NUMPAD_6 -> pan(1, 0)
             KeyEvent.KEYCODE_DPAD_LEFT -> if (pan) pan(-1, 0) else stepSibling(-1)
             KeyEvent.KEYCODE_DPAD_RIGHT -> if (pan) pan(1, 0) else stepSibling(1)
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> if (pan) pan(0, -1) else stepSibling(-1)

@@ -83,9 +83,12 @@ Single keys only for now; no chord is needed. Every key press is logged
 | Left D-Pad right or down, or Pan Down | → or ↓, Page Down | Next part at the same level |
 | Enter (dot 8) or Space | Space (Enter is kept by KeySoft) | Open the selected part (the one last touched or stepped to) |
 | Back (triangle) | Esc | Out one level; from the whole image, back to the web page |
-| Zoom + (oval, bottom right) | `+` or `=` | Zoom 2× on the selected part |
-| Zoom − (oval, bottom left) | `-` | Zoom out one step (same as Back while zoomed) |
-| Right D-Pad | Shift + arrow | Pan a quarter of the view (when zoomed) |
+| Right D-Pad up | Keypad 8, `+` or `=` | Zoom 2× on the selected part |
+| Right D-Pad down | Keypad 2, `-` | Zoom out one step (same as Back while zoomed) |
+| Right D-Pad left / right | Keypad 4 / 6, Shift + arrow | Pan a quarter of the view (when zoomed) |
+
+The zoom ovals send nothing to an app until it registers them in `commands.xml`
+*(planned)*, so zoom is on the right D-Pad for now.
 
 KeySoft may take some keys before the app sees them (MonarchTempest
 `docs/PHASE0-HARDWARE-FINDINGS.md`): Esc and character keys from a USB keyboard, and
