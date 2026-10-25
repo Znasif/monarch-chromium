@@ -2,7 +2,10 @@
   "id": "xkcd-327",
   "url": "https://xkcd.com/327/",
   "license": "CC BY-NC 2.5 (xkcd.com/license.html); snapshot kept local only",
-  "images": { "comic.png": "https://imgs.xkcd.com/comics/exploits_of_a_mom.png" },
+  "images": {
+    "comic.png": "https://imgs.xkcd.com/comics/exploits_of_a_mom.png",
+    "comic_2x.png": "https://imgs.xkcd.com/comics/exploits_of_a_mom_2x.png"
+  },
   "kind": "multi-panel webcomic (raster PNG, line art, hand-lettered dialogue)",
 
   "textView": {
@@ -28,11 +31,19 @@
       "gutters": "at least 1 blank pin column between each pair of adjacent panel borders",
       "textAsPins": "none: dialogue lettering is not drawn as pins at 1x; it is read through labels and the caption rows",
       "backgroundPins": "none outside panel interiors and borders",
+      "strokes": "every ink stroke (figure, furniture, phone squiggle, speech tail) becomes ONE 1-pin centerline, never a doubled outline of the stroke's two edges",
+      "drawings": [
+        "Mom in each panel as a stick figure: head outline with hair, torso line, two arms, two legs; each limb a continuous line; figure about 15 pins tall",
+        "phone at her head as a small mark touching the head outline",
+        "Panel 1 and Panel 2 tables: tabletop plus legs as vertical lines, clearly separate from Mom (>= 1 blank pin between them)",
+        "mug: at 1x may merge into the hand or tabletop; steam squiggles are dropped at 1x",
+        "phone-voice zigzags and speech tails: kept only if they fit under the fill limit; dropped before figures or furniture"
+      ],
       "deviceCheck": "By touch: count 4 panels left to right without lifting the finger off the top border."
     },
     "isolatePanel3": {
       "action": "Enter on Panel 3",
-      "expect": "Panel 3 alone, re-fit to the 96x35 canvas; the person's head, the phone and the two dialogue zones are separate pin regions; fill <= 0.25",
+      "expect": "Panel 3 alone, re-fit to the 96x35 canvas (Mom about 30 pins tall); head, hair, the phone held to her ear, torso, arms and legs are distinguishable lines; the two dialogue zones are separate touch regions without pins; fill <= 0.25",
       "back": "Back returns to the 1x overview with Panel 3 still selected"
     },
     "zoom": {
@@ -44,28 +55,32 @@
   "components": [
     { "id": "p1", "label": "Panel 1", "box": [0, 0, 147, 204],
       "children": [
-        { "label": "Person on the phone", "role": "figure" },
-        { "label": "Table with mug", "role": "object" },
+        { "label": "Mom on the phone, holding a mug", "role": "figure",
+          "parts": ["head", "hair", "phone", "torso", "arms", "legs", "mug in hand"] },
+        { "label": "Table", "role": "object", "parts": ["tabletop", "legs"] },
         { "label": "School (voice on the phone)", "role": "speech",
           "embeddedText": "Hi, this is your son's school. We're having some computer trouble." }
       ] },
     { "id": "p2", "label": "Panel 2", "box": [165, 0, 301, 204],
       "children": [
-        { "label": "Person holding the phone", "role": "figure" },
-        { "label": "Table with mug", "role": "object" },
+        { "label": "Mom holding the phone", "role": "figure",
+          "parts": ["head", "hair", "phone", "torso", "arms", "legs"] },
+        { "label": "Table with mug", "role": "object", "parts": ["tabletop", "legs", "mug"] },
         { "label": "Mom", "role": "speech", "embeddedText": "Oh, dear - did he break something?" },
         { "label": "School (voice on the phone)", "role": "speech", "embeddedText": "In a way-" }
       ] },
     { "id": "p3", "label": "Panel 3", "box": [310, 0, 478, 204],
       "children": [
-        { "label": "Person on the phone (close-up)", "role": "figure" },
+        { "label": "Mom on the phone", "role": "figure",
+          "parts": ["head", "hair", "phone", "torso", "arms", "legs"] },
         { "label": "School (voice on the phone)", "role": "speech",
           "embeddedText": "Did you really name your son Robert'); DROP TABLE Students;-- ?" },
         { "label": "Mom", "role": "speech", "embeddedText": "Oh, yes. Little Bobby Tables, we call him." }
       ] },
     { "id": "p4", "label": "Panel 4", "box": [489, 0, 665, 204],
       "children": [
-        { "label": "Person holding a mug and the phone", "role": "figure" },
+        { "label": "Mom on the phone, holding a mug", "role": "figure",
+          "parts": ["head", "hair", "phone", "torso", "arms", "legs", "mug in hand"] },
         { "label": "School (voice on the phone)", "role": "speech",
           "embeddedText": "Well, we've lost this year's student records. I hope you're happy." },
         { "label": "Mom", "role": "speech",
@@ -90,7 +105,7 @@
 
   "editing": {
     "tree": [
-      { "action": "rename 'Person on the phone' in p1 to 'Mom'", "expect": "new label spoken and captioned" },
+      { "action": "rename 'Mom on the phone, holding a mug' in p1 to 'Mom'", "expect": "new label spoken and captioned" },
       { "action": "split 'Table with mug' in p2 into 'Table' and 'Mug'", "expect": "two components, both inside p2, pins regrouped" },
       { "action": "merge them back", "expect": "one component again" },
       { "action": "move the 'Mom' speech of p3 under the p3 figure", "expect": "Enter on the figure shows the speech as its child" },
