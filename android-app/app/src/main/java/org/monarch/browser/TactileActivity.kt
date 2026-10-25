@@ -11,6 +11,9 @@ import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.humanware.keysoftsdk.selfbrailling.SelfBraillingManager
 import com.humanware.keysoftsdk.selfbrailling.widget.SelfBraillingWidget
+import com.humanware.keysoftsdk.translator.BrailleGrade
+import com.humanware.keysoftsdk.translator.Translator
+import com.humanware.keysoftsdk.translator.aidl.TranslationQuery
 import org.monarch.tactile.hit.HitGrid
 import org.monarch.tactile.model.NormalizedBox
 import org.monarch.tactile.model.TactileScene
@@ -35,6 +38,8 @@ object PendingImage {
 class TactileActivity : AppCompatActivity() {
     private lateinit var manager: SelfBraillingManager
     private lateinit var widget: SelfBraillingWidget
+    private lateinit var translator: Translator
+    private var captionCells = ""
     private val handler = Handler(Looper.getMainLooper())
     private val tone by lazy { ToneGenerator(AudioManager.STREAM_NOTIFICATION, 60) }
 
@@ -50,6 +55,7 @@ class TactileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         manager = SelfBraillingManager(this).apply { bindService() }
+        translator = Translator(this).apply { bindService() }
         widget = SelfBraillingWidget(this).also { setContentView(it); it.isFocusableInTouchMode = true }
         widget.onSelfBraillingWidgetListener = object : SelfBraillingWidget.OnSelfBraillingWidgetListener {
             override fun onFocused() = show()
@@ -111,7 +117,7 @@ class TactileActivity : AppCompatActivity() {
     /** Sends the canvas plus the Braille caption to the pins and the on-screen widget. */
     private fun show() {
         val grid = scene?.pinGrid?.copy() ?: return
-        Braille.writeCaption(grid, caption)
+        if (captionCells.isNotEmpty()) Braille.writeUnicode(grid, captionCells) else Braille.writeCaption(grid, caption)
         val dots = grid.toByteGrid()
         runCatching { manager.displayDots(dots) }.onFailure { Log.w(TAG, "displayDots", it) }
         widget.refresh(dots)
@@ -149,13 +155,8 @@ class TactileActivity : AppCompatActivity() {
         touchedId = id
         if (id == 0) return  // open space and lifting are silent
         Log.d(TAG, "touch ${point!!.x},${point.y} -> $id")
-        say(spoken(id))
-        handler.removeCallbacks(captionUpdate)
-        handler.postDelayed(captionUpdate, CAPTION_DELAY_MS)
+        say(spoken(id), captionText = labelOf(id))
     }
-
-    /** The caption follows the finger once it rests, so the pins are not resent on every move. */
-    private val captionUpdate = Runnable { if (touchedId != 0) setCaption(labelOf(touchedId)) }
 
     private fun partAt(x: Int, y: Int): Int? = hits?.lookup(x, y)?.takeIf { graphic?.partOf(it) != null }
 
@@ -269,12 +270,22 @@ class TactileActivity : AppCompatActivity() {
 
     private fun say(text: String, captionText: String = caption) {
         setCaption(captionText)
-        widget.announceForAccessibility(text)
+        runCatching { manager.announceText(text) }.onFailure { widget.announceForAccessibility(text) }
     }
 
     /** Only the caption rows differ, so the canvas pins stay as they are. */
     private fun setCaption(text: String) {
-        if (text != caption) { caption = text; show() }
+        if (text == caption) return
+        caption = text
+        captionCells = runCatching {
+            val query = TranslationQuery().apply {
+                setBack(false)
+                setGrade(BrailleGrade.GRADE_UNSPECIFIED)  // the user's KeySoft profile decides
+                setOriginal(text)
+            }
+            if (translator.translate(query)) query.translated.orEmpty() else ""
+        }.getOrDefault("")
+        show()
     }
 
     private fun beep() = tone.startTone(ToneGenerator.TONE_PROP_BEEP, 80)
@@ -282,12 +293,14 @@ class TactileActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         manager.bindService()
+        translator.bindService()
         handler.postDelayed({ show() }, 500)
     }
 
     override fun onStop() {
         tracking = false
         manager.unbindService()
+        runCatching { translator.unbindService() }
         super.onStop()
     }
 
@@ -300,7 +313,6 @@ class TactileActivity : AppCompatActivity() {
         private const val TAG = "MonarchTactile"
         private const val POLL_MS = 25L
         private const val CANVAS_ROWS = 35
-        private const val CAPTION_DELAY_MS = 600L
         private const val FINGER_X_CORRECTION = -3
     }
 }

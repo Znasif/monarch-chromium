@@ -28,7 +28,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/KeySoftSDK-0.1.136.aar"))
+    implementation(files("libs/KeySoftSDK-0.1.131.aar"))
     // KeySoftSDK's own dependencies (from its POM)
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.multidex:multidex:2.0.1")
