@@ -1,12 +1,14 @@
 """Grade a generated result against a site test case.
 
-Exact checks (pin fill, box overlap, counts) run locally. Items that need
+Exact checks (pin fill, box overlap, counts) run in code. Items that need
 judgement (does this pin drawing read as a stick figure? is this label close
-enough?) go to Claude Sonnet 5.5 with the case's tolerances, the source image
-and a rendering of the generated pins.
+enough?) go to a model grader with the case's tolerances, the source image and a
+rendering of the generated pins: Claude Sonnet 5.5 locally (--grader sonnet,
+default), Gemini 4 Argon in the agent sandbox and production (--grader argon).
+Both use the same prompt and verdict schema.
 
 Usage:
-    .venv/bin/python test-sites/judge.py <case-id> <result.json> [--no-llm]
+    .venv/bin/python test-sites/judge.py <case-id> <result.json> [--grader sonnet|argon] [--no-llm]
 
 Result file format (written by the local app and by the agent's modules):
 {
@@ -19,7 +21,7 @@ Result file format (written by the local app and by the agent's modules):
            "isolate:p3": [...], "zoom2x": [...]}
 }
 
-Requires ANTHROPIC_API_KEY in .env for the LLM part.
+Needs ANTHROPIC_API_KEY (sonnet) or GEMINI_API_KEY (argon) in .env or the environment.
 """
 
 import argparse
@@ -36,7 +38,8 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 CANVAS_ROWS = 35
 COLS = 96
-JUDGE_MODEL = "claude-sonnet-5-5"
+SONNET_MODEL = "claude-sonnet-5-5"  # local grading
+ARGON_MODEL = "gemini-4-argon"  # agent sandbox and production grading
 
 VERDICTS_SCHEMA = {
     "type": "object",
@@ -137,31 +140,37 @@ def pins_png(rows, scale=8):
     return buffer.getvalue()
 
 
-def image_block(data, media_type="image/png"):
-    return {"type": "image", "source": {"type": "base64", "media_type": media_type,
-                                        "data": base64.b64encode(data).decode()}}
-
-
-def llm_grade(case, result, checks):
-    import anthropic
-
-    client = anthropic.Anthropic()
-    content = []
+def grading_parts(case, result, checks):
+    """Provider-neutral prompt: a list of ("text", str) and ("image", bytes, mime)."""
+    parts = []
     source = HERE / "snapshots" / case["id"] / "images" / result.get("image", "")
     if result.get("image") and source.exists() and source.suffix.lower() in (".png", ".jpg", ".jpeg"):
         media = "image/png" if source.suffix.lower() == ".png" else "image/jpeg"
-        content += [{"type": "text", "text": "Source image:"}, image_block(source.read_bytes(), media)]
+        parts += [("text", "Source image:"), ("image", source.read_bytes(), media)]
     for view, rows in result.get("pins", {}).items():
-        content += [{"type": "text", "text": f"Generated pins, view '{view}':"}, image_block(pins_png(rows))]
-    content.append({"type": "text", "text": (
+        parts += [("text", f"Generated pins, view '{view}':"), ("image", pins_png(rows), "image/png")]
+    parts.append(("text", (
         "Test case (ground truth):\n" + json.dumps(case, indent=1, ensure_ascii=False)
         + "\n\nGenerated result (without pin arrays):\n"
         + json.dumps({k: v for k, v in result.items() if k != "pins"}, indent=1, ensure_ascii=False)
         + "\n\nExact measurements:\n" + json.dumps(checks, indent=1)
-        + "\n\nGrade each checkable expectation.")})
+        + "\n\nGrade each checkable expectation.")))
+    return parts
 
-    response = client.beta.messages.create(
-        model=JUDGE_MODEL,
+
+def grade_sonnet(parts):
+    """Local grading (ANTHROPIC_API_KEY)."""
+    import anthropic
+
+    content = []
+    for part in parts:
+        if part[0] == "text":
+            content.append({"type": "text", "text": part[1]})
+        else:
+            content.append({"type": "image", "source": {"type": "base64", "media_type": part[2],
+                                                        "data": base64.b64encode(part[1]).decode()}})
+    response = anthropic.Anthropic().beta.messages.create(
+        model=SONNET_MODEL,
         max_tokens=16000,
         betas=["server-side-fallback-2026-07-01"],
         fallbacks="default",
@@ -171,14 +180,38 @@ def llm_grade(case, result, checks):
     )
     if response.stop_reason == "refusal":
         sys.exit(f"judge refused: {response.stop_details}")
-    text = next(block.text for block in response.content if block.type == "text")
-    return json.loads(text)
+    return json.loads(next(block.text for block in response.content if block.type == "text"))
+
+
+def grade_argon(parts):
+    """Remote (agent sandbox) and production grading (GEMINI_API_KEY)."""
+    from google import genai
+
+    contents = [{"type": "text", "text": SYSTEM}]
+    for part in parts:
+        if part[0] == "text":
+            contents.append({"type": "text", "text": part[1]})
+        else:
+            contents.append({"type": "image", "data": base64.b64encode(part[1]).decode(), "mime_type": part[2]})
+    client = genai.Client()  # keep a reference: a temporary client closes its HTTP pool
+    interaction = client.interactions.create(
+        model=ARGON_MODEL,
+        input=contents,
+        generation_config={"thinking_level": "medium"},
+        response_format={"type": "text", "mime_type": "application/json", "schema": VERDICTS_SCHEMA},
+    )
+    return json.loads(interaction.output_text)
+
+
+GRADERS = {"sonnet": grade_sonnet, "argon": grade_argon}
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("case_id")
     parser.add_argument("result")
+    parser.add_argument("--grader", choices=sorted(GRADERS), default="sonnet",
+                        help="sonnet locally (default); argon in the agent sandbox and production")
     parser.add_argument("--no-llm", action="store_true", help="exact checks only")
     args = parser.parse_args()
 
@@ -188,7 +221,8 @@ def main():
     checks = exact_checks(case, result)
     report = {"caseId": args.case_id, "exact": checks}
     if not args.no_llm:
-        report["judge"] = llm_grade(case, result, checks)
+        report["grader"] = args.grader
+        report["judge"] = GRADERS[args.grader](grading_parts(case, result, checks))
 
     out = HERE / "reports" / f"{args.case_id}.json"
     out.parent.mkdir(exist_ok=True)
