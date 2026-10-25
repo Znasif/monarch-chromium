@@ -11,6 +11,7 @@ import org.monarch.tactile.model.Component
 import org.monarch.tactile.model.NormalizedBox
 import org.monarch.tactile.model.PinGrid
 import org.monarch.tactile.model.PinRect
+import org.monarch.tactile.model.SceneViewport
 import org.monarch.tactile.model.TactileScene
 import org.monarch.tactile.nav.ComponentGraph
 import org.monarch.tactile.nav.Direction
@@ -116,6 +117,49 @@ class TactileCoreModelAndHitGridTest {
 
         // Fingertip offset (-3 on X): tapping at rawX=14, rawY=10 hits x=11, y=10 (child=2)
         assertEquals(2, hitGrid.lookupWithFingertipOffset(14, 10))
+
+        // Out-of-bounds coordinates return NO_COMPONENT safely without throwing
+        assertEquals(HitGrid.NO_COMPONENT, hitGrid.lookup(-1, 10))
+        assertEquals(HitGrid.NO_COMPONENT, hitGrid.lookup(96, 10))
+        assertEquals(HitGrid.NO_COMPONENT, hitGrid.lookup(10, -1))
+        assertEquals(HitGrid.NO_COMPONENT, hitGrid.lookup(10, 40))
+    }
+
+    @Test
+    fun `HitGrid falls back to pinBox stamping when components have no explicit raisedPins`() {
+        val boxOnlyComp = Component(
+            id = 7,
+            label = "Box Only",
+            bbox = NormalizedBox(0.1f, 0.1f, 0.3f, 0.3f),
+            pinBox = PinRect(10, 5, 15, 10)
+        )
+        val grid = HitGrid()
+        grid.stampScene(listOf(boxOnlyComp), haloRadius = 1)
+        assertEquals(7, grid.lookup(12, 7))
+        assertEquals(7, grid.lookup(9, 5)) // 1-pin halo left of minX=10
+        assertEquals(HitGrid.NO_COMPONENT, grid.lookup(8, 5))
+    }
+
+    @Test
+    fun `NormalizedBox geometry and SceneViewport isolation projection work accurately`() {
+        val b1 = NormalizedBox.fromGemini1000(100, 200, 500, 600)
+        val b2 = NormalizedBox.fromGemini1000(300, 400, 700, 800)
+        assertTrue(b1.iou(b1) > 0.999f)
+        assertTrue(b1.iou(b2) in 0.1f..0.2f)
+
+        val union = b1.union(b2)
+        assertEquals(0.1f, union.ymin, 1e-5f)
+        assertEquals(0.2f, union.xmin, 1e-5f)
+        assertEquals(0.7f, union.ymax, 1e-5f)
+        assertEquals(0.8f, union.xmax, 1e-5f)
+
+        // Isolating a box onto the 96x35 viewport maps its corners to (0,0)..(95,34)
+        val isolatedViewport = SceneViewport(isolatedBox = b1)
+        val isolatedRect = b1.toPinRect(isolatedViewport)
+        assertEquals(0, isolatedRect.minX)
+        assertEquals(0, isolatedRect.minY)
+        assertEquals(95, isolatedRect.maxX)
+        assertEquals(34, isolatedRect.maxY)
     }
 
     @Test
@@ -154,5 +198,35 @@ class TactileCoreModelAndHitGridTest {
         assertEquals(3, graph.move(4, Direction.UP))
         assertEquals(1, graph.exit(3))
         assertEquals(1, graph.exit(4))
+
+        // Enter on leaf component emits BOUNDARY_BEEP
+        val leafEnter = graph.stepEnter(3)
+        assertFalse(leafEnter.moved)
+        assertEquals(NavigationFeedback.BOUNDARY_BEEP, leafEnter.feedback)
+
+        // Back on root component emits BOUNDARY_BEEP
+        val rootBack = graph.stepBack(1)
+        assertFalse(rootBack.moved)
+        assertEquals(NavigationFeedback.BOUNDARY_BEEP, rootBack.feedback)
+    }
+
+    @Test
+    fun `UndoRecord restores previous TactileScene after split, merge, reparent, and draw`() {
+        val initial = Xkcd327NavigationAndEditingTest.buildSyntheticXkcd327Scene()
+        val p2 = initial.componentByKey("p2")!!
+        val tableWithMug = initial.componentByLabel("Table with mug", parentId = p2.id)!!
+
+        val splitRes = initial.splitComponent(tableWithMug.id, "Table", "Mug")
+        assertEquals(initial.components.size + 1, splitRes.scene.components.size)
+
+        val undoneSplit = splitRes.scene.undo(splitRes.undoRecord)
+        assertEquals(initial.components.size, undoneSplit.scene.components.size)
+        assertEquals("Table with mug", undoneSplit.scene.componentById(tableWithMug.id)?.label)
+
+        val drawRes = initial.drawPinLine(p2.id, p2.pinBox.minX + 3, 12, p2.pinBox.maxX - 3, 12)
+        assertTrue(drawRes.scene.pinGrid.getPin(p2.pinBox.minX + 4, 12))
+
+        val undoneDraw = drawRes.scene.undo(drawRes.undoRecord)
+        assertFalse(undoneDraw.scene.pinGrid.getPin(p2.pinBox.minX + 4, 12))
     }
 }
