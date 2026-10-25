@@ -17,7 +17,6 @@ import org.monarch.tactile.hit.HitGrid
 import org.monarch.tactile.model.NormalizedBox
 import org.monarch.tactile.model.TactileScene
 import org.monarch.tactile.nav.ComponentGraph
-import org.monarch.tactile.nav.Direction
 import kotlin.concurrent.thread
 
 /** The image the browser asked to open (too large for an Intent extra). */
@@ -28,11 +27,12 @@ object PendingImage {
 
 /**
  * Full-screen tactile viewer. The canvas never changes while you feel it; only speech
- * and the Braille caption follow the finger. Inputs are the ones that reach an app on
- * the Monarch (MonarchTempest docs/PHASE0-HARDWARE-FINDINGS.md):
+ * and the Braille caption follow the finger (KeySoft touch polled as in MonarchIO's
+ * MapFingerTracker).
  *  - finger + double-press of the Action button: select the part under the finger;
  *    the same again on the selected part opens it
- *  - D-pad up/down, Pan up/down: previous/next part; Enter (dot 8): open; Back: out
+ *  - left D-pad: previous/next part; right D-pad (Shift + arrow): pan when zoomed
+ *  - Enter (dot 8): open; Back: out; Zoom keys: zoom on the selected part
  */
 class TactileActivity : AppCompatActivity() {
     private lateinit var manager: SelfBraillingManager
@@ -52,7 +52,7 @@ class TactileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         manager = SelfBraillingManager(this).apply { bindService() }
-        widget = SelfBraillingWidget(this).also { setContentView(it) }
+        widget = SelfBraillingWidget(this).also { setContentView(it); it.isFocusableInTouchMode = true }
         widget.onSelfBraillingWidgetListener = object : SelfBraillingWidget.OnSelfBraillingWidgetListener {
             override fun onFocused() = show()
             override fun onSingleTapAtBraillePosition(pointX: Int, pointY: Int) {
@@ -98,7 +98,7 @@ class TactileActivity : AppCompatActivity() {
         show()
         val roots = scene!!.rootComponentIds.size
         say("${PendingImage.title}. $roots ${if (roots == 1) "part" else "parts"}. Explore with your finger. ${labelOf(focusId)}")
-        handler.post(pollTouch)
+        startTracking()
     }
 
     private fun render() {
@@ -119,24 +119,42 @@ class TactileActivity : AppCompatActivity() {
         widget.refresh(dots)
     }
 
-    private val pollTouch = object : Runnable {
-        override fun run() {
-            val point = runCatching { manager.touchedPinCoordinates }.getOrNull()?.firstOrNull()
-            if (point != null) {
-                val id = partAt(point.x, point.y) ?: 0
-                if (id != 0 && id != touchedId) {
-                    Log.d(TAG, "touch ${point.x},${point.y} -> $id")
-                    touchedId = id
-                    vibrate()
-                    say(spoken(id))
-                    handler.removeCallbacks(captionUpdate)
-                    handler.postDelayed(captionUpdate, CAPTION_DELAY_MS)
+    @Volatile private var tracking = false
+    private var lastFinger: android.graphics.Point? = null
+
+    /** Polls KeySoft's pin coordinates off the UI thread (a binder call) and follows one finger. */
+    private fun startTracking() {
+        if (tracking) return
+        tracking = true
+        thread(isDaemon = true, name = "FingerPoll") {
+            while (tracking) {
+                val started = android.os.SystemClock.uptimeMillis()
+                val points = runCatching { manager.touchedPinCoordinates }.getOrNull()
+                    ?.filter { it.x in 0 until 96 && it.y in 0 until CANVAS_ROWS }
+                if (points != null) {
+                    val last = lastFinger
+                    // Keep following the same finger when a second hand comes down.
+                    val finger = if (last == null) points.firstOrNull()
+                        else points.minByOrNull { (it.x - last.x) * (it.x - last.x) + (it.y - last.y) * (it.y - last.y) }
+                    lastFinger = finger
+                    handler.post { if (tracking) onFinger(finger) }
                 }
-            } else {
-                touchedId = 0
+                val sleep = POLL_MS - (android.os.SystemClock.uptimeMillis() - started)
+                if (sleep > 0) try { Thread.sleep(sleep) } catch (_: InterruptedException) { break }
             }
-            handler.postDelayed(this, POLL_MS)
         }
+    }
+
+    private fun onFinger(point: android.graphics.Point?) {
+        val id = point?.let { partAt(it.x, it.y) } ?: 0
+        if (id == touchedId) return
+        touchedId = id
+        if (id == 0) return  // open space and lifting are silent
+        Log.d(TAG, "touch ${point!!.x},${point.y} -> $id")
+        vibrate()
+        say(spoken(id))
+        handler.removeCallbacks(captionUpdate)
+        handler.postDelayed(captionUpdate, CAPTION_DELAY_MS)
     }
 
     /** The caption follows the finger once it rests, so the pins are not resent on every move. */
@@ -183,27 +201,52 @@ class TactileActivity : AppCompatActivity() {
         say("Zoom ${1 shl (views.size - 1)} times")
     }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.d(TAG, "key $keyCode ${event?.metaState}")
-        val direction = when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT -> Direction.LEFT
-            KeyEvent.KEYCODE_DPAD_RIGHT -> Direction.RIGHT
-            else -> null
-        }
-        if (direction != null) {
-            val step = graph?.stepDirectional(focusId, direction) ?: return true
-            if (step.moved) focus(step.toComponentId) else beep()
+    private var pendingShift = false
+    private val clearPendingShift = Runnable { pendingShift = false }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val keyCode = event.keyCode
+        Log.d(TAG, "key ${KeyEvent.keyCodeToString(keyCode)} action=${event.action} meta=${event.metaState}")
+        if (keyCode == KeyEvent.KEYCODE_SHIFT_LEFT || keyCode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
+            // The right D-pad sends Shift just before its arrow.
+            if (event.action == KeyEvent.ACTION_DOWN) {
+                pendingShift = true
+                handler.removeCallbacks(clearPendingShift)
+                handler.postDelayed(clearPendingShift, 300)
+            }
             return true
         }
+        if (event.action != KeyEvent.ACTION_DOWN) return super.dispatchKeyEvent(event)
+        val pan = pendingShift || event.isShiftPressed
+        val handled = when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> if (pan) pan(-1, 0) else stepSibling(-1)
+            KeyEvent.KEYCODE_DPAD_RIGHT -> if (pan) pan(1, 0) else stepSibling(1)
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> if (pan) pan(0, -1) else stepSibling(-1)
+            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> if (pan) pan(0, 1) else stepSibling(1)
+            else -> null
+        }
+        if (handled != null) { pendingShift = false; return true }
+        return onKey(keyCode) || super.dispatchKeyEvent(event)
+    }
+
+    private fun onKey(keyCode: Int): Boolean {
         return when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_PAGE_UP -> { stepSibling(-1); true }
-            KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_PAGE_DOWN -> { stepSibling(1); true }
             KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> { enter(); true }
             KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> { if (!back()) finish(); true }
             KeyEvent.KEYCODE_ZOOM_IN, KeyEvent.KEYCODE_PLUS, KeyEvent.KEYCODE_EQUALS -> { zoomIn(); true }
             KeyEvent.KEYCODE_ZOOM_OUT, KeyEvent.KEYCODE_MINUS -> { if (!back()) beep(); true }
-            else -> super.onKeyDown(keyCode, event)
+            else -> false
         }
+    }
+
+    /** Moves the zoomed view by a quarter of its size. */
+    private fun pan(dx: Int, dy: Int) {
+        val g = graphic ?: return
+        if (views.size <= 1) { say("Zoom in to pan"); return }
+        val v = views.removeLast()
+        val ox = dx * v.width / 4; val oy = dy * v.height / 4
+        views.addLast(NormalizedBox(ymin = v.ymin + oy, xmin = v.xmin + ox, ymax = v.ymax + oy, xmax = v.xmax + ox))
+        render()
     }
 
     /** Previous/next part among the focused part's siblings, in reading order. */
@@ -250,19 +293,20 @@ class TactileActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        handler.removeCallbacks(pollTouch)
+        tracking = false
         manager.unbindService()
         super.onStop()
     }
 
     override fun onRestart() {
         super.onRestart()
-        if (graphic != null) handler.post(pollTouch)
+        if (graphic != null) startTracking()
     }
 
     companion object {
         private const val TAG = "MonarchTactile"
-        private const val POLL_MS = 40L
+        private const val POLL_MS = 25L
+        private const val CANVAS_ROWS = 35
         private const val CAPTION_DELAY_MS = 600L
         private const val FINGER_X_CORRECTION = -3
     }
