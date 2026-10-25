@@ -1,0 +1,14 @@
+{
+  "name": "@monarch/bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Engine-neutral browser-side JavaScript bridge for Monarch Tactile Browser (image-to-button promotion, SVG and Canvas2D geometry capture)",
+  "type": "module",
+  "main": "src/bridge.js",
+  "scripts": {
+    "test": "node --test test/bridge.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1"
+  }
+}
