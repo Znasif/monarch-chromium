@@ -32,12 +32,17 @@
       button.type = 'button';
       button.textContent = 'Explore tactile image: ' + name;
       button.style.cssText = 'display:block;margin:4px 0;font-size:16px';
-      (function (src, name, title) {
-        button.addEventListener('click', function (e) {
+      (function (img, src, name, title) {
+        function open(e) {
           e.preventDefault(); e.stopPropagation();
           MonarchBridge.openImage(src, name + (title ? '. ' + title : ''));
-        });
-      })(img.currentSrc || img.src, name, title);
+        }
+        button.addEventListener('click', open);
+        // Activating the picture itself opens it too. KeySoft delivers that as
+        // contextmenu on an <img>, not click (MonarchTempest hardware findings).
+        img.addEventListener('contextmenu', open);
+        img.addEventListener('click', open);
+      })(img, img.currentSrc || img.src, name, title);
       var anchor = img.closest('a') || img;
       anchor.insertAdjacentElement('afterend', button);
     }
