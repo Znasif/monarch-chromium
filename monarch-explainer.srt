@@ -1,0 +1,339 @@
+1
+00:00:00,050 --> 00:00:04,651
+A webpage is designed for millions of colour pixels, while the HumanWare and
+
+2
+00:00:04,691 --> 00:00:09,292
+APH Monarch has ninety-six by forty physical moving pins: three thousand, eight hundred
+
+3
+00:00:09,332 --> 00:00:11,077
+and forty pins in total.
+
+4
+00:00:11,117 --> 00:00:15,718
+Naively thresholding an image raises over forty percent of the grid, turning adjacent
+
+5
+00:00:15,758 --> 00:00:18,217
+strokes into an unreadable wall of plastic.
+
+6
+00:00:18,257 --> 00:00:22,858
+To stay legible by touch, active canvas fill must stay at or below
+
+7
+00:00:22,898 --> 00:00:23,698
+twenty-five percent.
+
+8
+00:00:23,612 --> 00:00:28,213
+Monarch therefore splits the forty rows into rows zero through thirty-four for the
+
+9
+00:00:28,253 --> 00:00:32,854
+graphic canvas, row thirty-five as a blank separator, and rows thirty-six through thirty-nine
+
+10
+00:00:32,894 --> 00:00:34,639
+for a thirty-two-cell Braille caption.
+
+11
+00:00:34,883 --> 00:00:40,546
+When any page loads, bridge dot js runs a single generic DOM pass
+
+12
+00:00:40,586 --> 00:00:42,300
+with zero site-specific rules.
+
+13
+00:00:42,340 --> 00:00:48,003
+It scans images, SVGs, canvases, role-equals-img nodes, and book-viewer viewports, filtering out tiny
+
+14
+00:00:48,043 --> 00:00:50,196
+icons and zero-pixel tracking beacons.
+
+15
+00:00:50,236 --> 00:00:55,898
+It derives a human label from alt text, aria-label, figcaption, table captions, or
+
+16
+00:00:55,938 --> 00:01:01,601
+the filename, and injects an Explore tactile image button right after each picture.
+
+17
+00:01:01,641 --> 00:01:07,303
+Meanwhile, extract dot js builds a clean Text View across all seven benchmark
+
+18
+00:01:07,343 --> 00:01:13,006
+sites, from xkcd and Wikipedia to Archive dot org, Google Books, Gutenberg, OpenStax,
+
+19
+00:01:13,046 --> 00:01:14,760
+and Library of Congress.
+
+20
+00:01:15,008 --> 00:01:18,935
+Activating an Explore button sends the image into Tier-two compilation.
+
+21
+00:01:18,975 --> 00:01:24,091
+ImageNormalizer flattens alpha onto a white canvas and scales the longer edge to
+
+22
+00:01:24,131 --> 00:01:26,867
+at most seven hundred and sixty-eight pixels.
+
+23
+00:01:26,907 --> 00:01:32,023
+We hash the raw bytes with SHA-256 so DiskCache serves repeat visits in
+
+24
+00:01:32,063 --> 00:01:33,213
+under a millisecond.
+
+25
+00:01:33,253 --> 00:01:38,369
+On a cache miss, gemini-4-argon with thinking-level low returns a strict JSON component
+
+26
+00:01:38,409 --> 00:01:41,939
+tree of normalized zero-to-one-thousand boxes and one-pin centerline polylines.
+
+27
+00:01:41,979 --> 00:01:47,095
+Colour becomes outline-only, and text bubbles use role equals text with empty strokes—making
+
+28
+00:01:47,135 --> 00:01:51,855
+them touchable audio and Braille regions without raising a single cluttering pin.
+
+29
+00:01:52,094 --> 00:01:57,435
+Next, GraphicScene dot kt projects those normalized coordinates onto the ninety-six by thirty-five
+
+30
+00:01:57,475 --> 00:02:00,746
+canvas using fitToCanvas and integer Bresenham line rasterization.
+
+31
+00:02:00,786 --> 00:02:06,127
+On multi-panel comics like xkcd three twenty-seven, independent rounding caused Panel three's right
+
+32
+00:02:06,167 --> 00:02:11,507
+border at column sixty-eight to touch Panel four's left border at column sixty-nine,
+
+33
+00:02:11,547 --> 00:02:14,405
+merging two frames into one thick ridge.
+
+34
+00:02:14,445 --> 00:02:19,785
+Our panelFrames fix pulls Panel three's right border back to column sixty-seven, guaranteeing
+
+35
+00:02:19,825 --> 00:02:22,683
+column sixty-eight stays a blank one-pin separator.
+
+36
+00:02:22,723 --> 00:02:28,063
+Finally, dropOrder removes the smallest non-panel strokes first if fill exceeds twenty-five percent;
+
+37
+00:02:28,103 --> 00:02:31,788
+xkcd three twenty-seven fits at nineteen point two percent.
+
+38
+00:02:32,028 --> 00:02:36,435
+To make every stroke and speech bubble respond to touch, HitGrid dot kt
+
+39
+00:02:36,475 --> 00:02:39,172
+builds a flat ninety-six by forty integer array.
+
+40
+00:02:39,212 --> 00:02:43,619
+It sorts components from largest pin-box area down to smallest, stamps a one-pin
+
+41
+00:02:43,659 --> 00:02:48,066
+halo around strokes and fills text boxes, and stamps direct raised pins on
+
+42
+00:02:48,106 --> 00:02:48,906
+top.
+
+43
+00:02:48,448 --> 00:02:50,802
+Because smaller parts are stamped last, Mrs.
+
+44
+00:02:50,842 --> 00:02:55,249
+Roberts at eighty square pins wins over Panel three at one thousand and
+
+45
+00:02:55,289 --> 00:02:56,089
+eight.
+
+46
+00:02:55,631 --> 00:03:00,038
+As FingerPoll samples at forty Hertz, moving a finger speaks each label and
+
+47
+00:03:00,078 --> 00:03:04,485
+updates the Braille caption on rows thirty-six through thirty-nine, while the canvas never
+
+48
+00:03:04,525 --> 00:03:04,970
+moves.
+
+49
+00:03:05,070 --> 00:03:06,838
+Touching reads; explicit actions navigate.
+
+50
+00:03:06,878 --> 00:03:11,540
+ComponentGraph organizes parts into a Data Navigator tree with four root panels at
+
+51
+00:03:11,580 --> 00:03:15,157
+Level zero and figures plus speech bubbles at Level one.
+
+52
+00:03:15,197 --> 00:03:17,327
+When your finger rests on Mrs.
+
+53
+00:03:17,367 --> 00:03:22,029
+Roberts at the overview level, double-pressing the front Action button calls atCurrentLevel: it
+
+54
+00:03:22,069 --> 00:03:26,731
+climbs parent pointers to Level zero, isolates Panel three across the full canvas
+
+55
+00:03:26,771 --> 00:03:29,986
+at nineteen point five percent fill, and selects Mrs.
+
+56
+00:03:30,026 --> 00:03:31,071
+Roberts inside it.
+
+57
+00:03:31,111 --> 00:03:35,773
+The Left D-pad then steps sibling parts, single Action toggles two-times zoom, the
+
+58
+00:03:35,813 --> 00:03:39,028
+Right D-pad pans, and Back returns to the overview.
+
+59
+00:03:39,278 --> 00:03:44,758
+Testing on physical Monarch hardware with SDK zero point one point one three
+
+60
+00:03:44,798 --> 00:03:47,305
+one taught us five hardware lessons.
+
+61
+00:03:47,345 --> 00:03:52,824
+First, the Left D-pad sends standard directions, the Right D-pad prefixes Shift within
+
+62
+00:03:52,864 --> 00:03:58,344
+three hundred milliseconds, the front Action key sends Enter, and Point-and-Click is reserved
+
+63
+00:03:58,384 --> 00:04:00,042
+by the system cursor.
+
+64
+00:04:00,082 --> 00:04:05,562
+Second, onDoubleTapAtBraillePosition has zero horizontal offset, letting commit eight c b one c
+
+65
+00:04:05,602 --> 00:04:08,958
+four four remove a stale plus-three column shift.
+
+66
+00:04:08,998 --> 00:04:11,505
+Third, Monarch has no vibration motor.
+
+67
+00:04:11,545 --> 00:04:15,327
+Fourth, BrailleTranslator binds HumanWare's KeySoft Translator for eight-dot captions.
+
+68
+00:04:15,367 --> 00:04:20,846
+And fifth, SightedOverlay stays at two-percent alpha until NumLock toggles it for HDMI
+
+69
+00:04:20,886 --> 00:04:21,428
+viewers.
+
+70
+00:04:21,528 --> 00:04:26,715
+Every component is tested against seven benchmark sites in test-sites slash cases.
+
+71
+00:04:26,755 --> 00:04:30,199
+Our evaluator, judge dot py, runs two layers.
+
+72
+00:04:30,239 --> 00:04:35,860
+Layer one checks deterministic invariants: headings, links, Explore button labels, canvas fill at
+
+73
+00:04:35,900 --> 00:04:41,522
+or below twenty-five percent, row thirty-five clear, text parts pin-free, panel count, bounding-box
+
+74
+00:04:41,562 --> 00:04:47,184
+IoU at or above point six five, and touch-hit coordinates—passing nine of nine
+
+75
+00:04:47,224 --> 00:04:49,362
+checks on xkcd three twenty-seven.
+
+76
+00:04:49,402 --> 00:04:55,023
+Layer two scores a five-criterion rubric with Claude Sonnet four point six locally
+
+77
+00:04:55,063 --> 00:05:00,685
+or gemini-4-argon in the sandbox, backed by thirty-five automated JUnit, Playwright, and Tier-two
+
+78
+00:05:00,725 --> 00:05:01,262
+tests.
+
+79
+00:05:01,362 --> 00:05:05,719
+Finally, we separate what is built today from what comes next.
+
+80
+00:05:05,759 --> 00:05:10,915
+Built and verified in this repository today are the physical Monarch Android app
+
+81
+00:05:10,955 --> 00:05:16,112
+on SDK zero point one point one three one, tactile-core, the Playwright-verified DOM
+
+82
+00:05:16,152 --> 00:05:21,308
+bridge across seven sites, and the Tier-two Gemini segmenter with SHA-256 disk caching.
+
+83
+00:05:21,348 --> 00:05:26,505
+Next on the roadmap: wiring tier-two and bridge directly into android-app behind BrowserEngine,
+
+84
+00:05:26,545 --> 00:05:31,701
+adding ContextMenuActivity for Brailliant thumb-key chords and KeyBRF export, and extending tactile compilation
+
+85
+00:05:31,741 --> 00:05:34,100
+to hard WebGL and slippy-tile maps.
