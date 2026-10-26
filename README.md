@@ -7,6 +7,16 @@
 
 ---
 
+## Explainer video
+
+- **Release (`explainer-v1`):** [https://github.com/Znasif/monarch-chromium/releases/tag/explainer-v1](https://github.com/Znasif/monarch-chromium/releases/tag/explainer-v1) ([direct 1080p MP4 download](https://github.com/Znasif/monarch-chromium/raw/explainer-v1-asset/monarch-explainer.mp4)) · **Script & storyboard:** [`docs/video/SCRIPT.md`](docs/video/SCRIPT.md) · **Claim verification table:** [`docs/video/CLAIMS.md`](docs/video/CLAIMS.md)
+
+This 5-minute 34-second, 3Blue1Brown-style technical explainer walks through how the Monarch Tactile Browser turns arbitrary web images into navigable 1-pin tactile graphics on the 96×40 physical pin display (≤ 25% fill on rows 0–34, blank separator row 35, and 32-cell Braille caption on rows 36–39).
+Built with Manim Community Edition from the real bundled `xkcd #327` graphic (`GraphicScene.kt` rules in Python), it demonstrates the zero-site-rule `bridge.js` DOM injector, `gemini-4-argon` centerline stroke segmentation with SHA-256 caching, the Panel 3/4 border collision fix, `HitGrid` smallest-part precedence, `Data Navigator` hierarchical isolation, and physical Monarch hardware findings on SDK `0.1.131`.
+Every claim is cross-referenced to source code and commits in [`docs/video/CLAIMS.md`](docs/video/CLAIMS.md), clearly separating what is built and verified today from upcoming roadmap items.
+
+---
+
 ## 1. Core Design Philosophy: Site-Generalizable & Open-Source Permissive
 
 1. **Zero Hardcoded Site Presets (`No Code Names a Site`)**:
