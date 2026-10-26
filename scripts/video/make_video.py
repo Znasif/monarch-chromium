@@ -50,15 +50,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=34,
         uses_omni="omni_01_hand_pins",
         narration=(
-            "A modern webpage is built for millions of colour pixels. "
-            "The HumanWare and APH Monarch tactile tablet has just ninety-six by forty physical moving pins: "
-            "three thousand, eight hundred and forty pins in total. "
-            "If you naively threshold a bitmap onto that grid, over forty percent of the pins pop up at once. "
-            "Under a fingertip, adjacent raised pins blur into an unreadable wall of plastic. "
-            "To stay legible by touch, active canvas fill must stay at or below twenty-five percent. "
-            "So Monarch partitions the forty rows into three zones: rows zero through thirty-four form the "
-            "ninety-six by thirty-five graphic canvas; row thirty-five stays permanently lowered as a one-pin "
-            "tactile separator; and rows thirty-six through thirty-nine form a thirty-two-cell Braille caption strip."
+            "A webpage is designed for millions of colour pixels, while the HumanWare and APH Monarch "
+            "has ninety-six by forty physical moving pins: three thousand, eight hundred and forty pins in total. "
+            "Naively thresholding an image raises over forty percent of the grid, turning adjacent strokes into "
+            "an unreadable wall of plastic. To stay legible by touch, active canvas fill must stay at or below "
+            "twenty-five percent. Monarch therefore splits the forty rows into rows zero through thirty-four for "
+            "the graphic canvas, row thirty-five as a blank separator, and rows thirty-six through thirty-nine "
+            "for a thirty-two-cell Braille caption."
         ),
     ),
     SceneSpec(
@@ -69,15 +67,12 @@ SCENES: List[SceneSpec] = [
         target_duration_s=30,
         uses_omni=None,
         narration=(
-            "How do we find worth-exploring diagrams on arbitrary websites without writing per-domain scrapers? "
-            "When any page loads, bridge dot js runs a single generic pass over images, SVGs, canvases, "
-            "role-equals-img nodes, and book-viewer viewports. "
-            "It filters out tiny icons and zero-pixel tracking beacons, extracts a human label from alt text, "
-            "aria-label, aria-labelledby, figcaption, table captions, or the cleaned filename, and injects "
-            "an accessible Explore tactile image button right after each graphic. "
-            "Simultaneously, extract dot js builds a distraction-free Text View of headings, paragraphs, "
-            "tables, and links across all seven benchmark sites—from xkcd and Wikipedia to Archive dot org, "
-            "Google Books, Project Gutenberg, OpenStax Biology, and Library of Congress newspapers."
+            "When any page loads, bridge dot js runs a single generic DOM pass with zero site-specific rules. "
+            "It scans images, SVGs, canvases, role-equals-img nodes, and book-viewer viewports, filtering out "
+            "tiny icons and zero-pixel tracking beacons. It derives a human label from alt text, aria-label, "
+            "figcaption, table captions, or the filename, and injects an Explore tactile image button right after "
+            "each picture. Meanwhile, extract dot js builds a clean Text View across all seven benchmark sites, "
+            "from xkcd and Wikipedia to Archive dot org, Google Books, Gutenberg, OpenStax, and Library of Congress."
         ),
     ),
     SceneSpec(
@@ -88,17 +83,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=40,
         uses_omni=None,
         narration=(
-            "When the reader activates an Explore button, Tier-2 turns the bitmap into a structured tactile scene. "
-            "First, ImageNormalizer flattens transparency onto an opaque white canvas and scales the longer edge "
-            "to at most seven hundred and sixty-eight pixels. "
-            "Next, we hash the raw image bytes with SHA-256. On a cache hit, DiskCache returns the validated "
-            "JSON in under a millisecond with zero network calls. "
-            "On a cache miss, Tier-2 sends the normalized PNG to gemini-4-argon via the Interactions API with "
-            "thinking-level low and a strict JSON schema. "
-            "Instead of filled regions, the model returns a hierarchy of semantic parts—panels, figures, and "
-            "diagrams—each with normalized zero-to-one-thousand boxes and one-pin centerline polylines. "
-            "Crucially, text bubbles have role equals text and empty strokes: they become touchable audio and "
-            "Braille regions without raising a single cluttering pin on the canvas."
+            "Activating an Explore button sends the image into Tier-two compilation. ImageNormalizer flattens "
+            "alpha onto a white canvas and scales the longer edge to at most seven hundred and sixty-eight pixels. "
+            "We hash the raw bytes with SHA-256 so DiskCache serves repeat visits in under a millisecond. "
+            "On a cache miss, gemini-4-argon with thinking-level low returns a strict JSON component tree of "
+            "normalized zero-to-one-thousand boxes and one-pin centerline polylines. Colour becomes outline-only, "
+            "and text bubbles use role equals text with empty strokes—making them touchable audio and Braille "
+            "regions without raising a single cluttering pin."
         ),
     ),
     SceneSpec(
@@ -109,19 +100,14 @@ SCENES: List[SceneSpec] = [
         target_duration_s=38,
         uses_omni=None,
         narration=(
-            "Now GraphicScene dot kt projects those normalized coordinates onto the ninety-six by thirty-five "
-            "pin canvas. fitToCanvas preserves the source aspect ratio, and integer Bresenham line rasterization "
-            "draws crisp one-pin-wide strokes. "
-            "On multi-panel comics like xkcd three twenty-seven, independent rounding of adjacent panels created "
-            "a subtle tactile bug: Panel three's right border landed on column sixty-eight while Panel four's "
-            "left border landed on column sixty-nine. With zero blank pins between them, two panel frames merged "
-            "into one thick ridge under the finger. "
-            "Our panelFrames pass detects whenever a right border meets or sits one pin from the next panel's "
-            "left border and pulls it back to column sixty-seven, guaranteeing column sixty-eight is a blank "
-            "one-pin separator. "
-            "Finally, if raised pins ever exceed twenty-five percent of the canvas, dropOrder removes the "
-            "smallest non-panel strokes first until fill is under budget. On xkcd three twenty-seven, all "
-            "seventeen parts fit at nineteen point two percent fill."
+            "Next, GraphicScene dot kt projects those normalized coordinates onto the ninety-six by thirty-five "
+            "canvas using fitToCanvas and integer Bresenham line rasterization. "
+            "On multi-panel comics like xkcd three twenty-seven, independent rounding caused Panel three's right "
+            "border at column sixty-eight to touch Panel four's left border at column sixty-nine, merging two frames "
+            "into one thick ridge. Our panelFrames fix pulls Panel three's right border back to column sixty-seven, "
+            "guaranteeing column sixty-eight stays a blank one-pin separator. Finally, dropOrder removes the smallest "
+            "non-panel strokes first if fill exceeds twenty-five percent; xkcd three twenty-seven fits at nineteen "
+            "point two percent."
         ),
     ),
     SceneSpec(
@@ -132,15 +118,12 @@ SCENES: List[SceneSpec] = [
         target_duration_s=32,
         uses_omni="omni_02_double_press",
         narration=(
-            "To make every raised line and speech bubble respond instantly to a fingertip, HitGrid dot kt builds "
-            "a flat ninety-six by forty integer lookup table. "
-            "It sorts components from largest pin-box area down to smallest, stamps a one-pin halo around every "
-            "stroke and fills text-component boxes, and then stamps direct raised pins on top. "
-            "Because smaller parts are stamped last, Mrs. Roberts at eighty square pins automatically wins over "
-            "Panel three at one thousand and eight square pins. "
-            "As FingerPoll samples the touch surface at forty Hertz with a twenty-five millisecond debounce, "
-            "moving your finger speaks each part and updates the Braille caption on rows thirty-six through "
-            "thirty-nine—while rows zero through thirty-four never move under a resting hand."
+            "To make every stroke and speech bubble respond to touch, HitGrid dot kt builds a flat ninety-six by "
+            "forty integer array. It sorts components from largest pin-box area down to smallest, stamps a one-pin "
+            "halo around strokes and fills text boxes, and stamps direct raised pins on top. Because smaller parts "
+            "are stamped last, Mrs. Roberts at eighty square pins wins over Panel three at one thousand and eight. "
+            "As FingerPoll samples at forty Hertz, moving a finger speaks each label and updates the Braille caption "
+            "on rows thirty-six through thirty-nine, while the canvas never moves."
         ),
     ),
     SceneSpec(
@@ -151,15 +134,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=36,
         uses_omni=None,
         narration=(
-            "Touching reads; explicit actions navigate. ComponentGraph organizes the scene into a Data Navigator "
-            "hierarchy: four root panels at Level zero, and figures plus speech bubbles inside each panel at Level one. "
-            "When your finger rests on Mrs. Roberts while you are still at the four-panel overview, double-pressing "
-            "the front-edge Action button calls atCurrentLevel. It climbs parent pointers to Level zero, opens "
-            "Panel three to fill the entire ninety-six by thirty-five canvas at nineteen point five percent fill, "
-            "and selects Mrs. Roberts inside it. "
-            "From there, the Left D-pad steps cleanly through sibling parts—the desk phone, Mrs. Roberts, and her "
-            "speech bubble—while a single Action press toggles two-times zoom, the Right D-pad pans the viewport, "
-            "and Back pops the navigation stack to the full comic."
+            "Touching reads; explicit actions navigate. ComponentGraph organizes parts into a Data Navigator tree "
+            "with four root panels at Level zero and figures plus speech bubbles at Level one. "
+            "When your finger rests on Mrs. Roberts at the overview level, double-pressing the front Action button "
+            "calls atCurrentLevel: it climbs parent pointers to Level zero, isolates Panel three across the full "
+            "canvas at nineteen point five percent fill, and selects Mrs. Roberts inside it. "
+            "The Left D-pad then steps sibling parts, single Action toggles two-times zoom, the Right D-pad pans, "
+            "and Back returns to the overview."
         ),
     ),
     SceneSpec(
@@ -170,17 +151,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=30,
         uses_omni=None,
         narration=(
-            "Running on physical Monarch hardware with SDK zero point one point one three one revealed five "
-            "ground-truth lessons that no emulator could show. "
-            "First, key routing: the Left D-pad sends standard directional codes, the Right D-pad prefixes every "
-            "direction with Shift within three hundred milliseconds, the front Action key sends Enter, and the "
-            "Point-and-Click buttons are intercepted by the system cursor. "
-            "Second, onDoubleTapAtBraillePosition delivers exact zero-to-ninety-five column coordinates with zero "
-            "horizontal offset, allowing us to delete a stale plus-three column workaround in commit eight c b one c four four. "
-            "Third, Monarch has no vibration motor, so all feedback combines tactile pins and speech. "
-            "Fourth, BrailleTranslator binds HumanWare's KeySoft Translator service for eight-dot caption cells. "
-            "And fifth, SightedOverlay stays at two-percent alpha so it never blocks raw touch events on GraphicView, "
-            "toggling to full opacity on NumLock for HDMI viewers."
+            "Testing on physical Monarch hardware with SDK zero point one point one three one taught us five "
+            "hardware lessons. First, the Left D-pad sends standard directions, the Right D-pad prefixes Shift "
+            "within three hundred milliseconds, the front Action key sends Enter, and Point-and-Click is reserved "
+            "by the system cursor. Second, onDoubleTapAtBraillePosition has zero horizontal offset, letting commit "
+            "eight c b one c four four remove a stale plus-three column shift. Third, Monarch has no vibration motor. "
+            "Fourth, BrailleTranslator binds HumanWare's KeySoft Translator for eight-dot captions. And fifth, "
+            "SightedOverlay stays at two-percent alpha until NumLock toggles it for HDMI viewers."
         ),
     ),
     SceneSpec(
@@ -191,16 +168,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=32,
         uses_omni=None,
         narration=(
-            "Every layer of the stack is verified against seven real-world benchmark cases in test-sites slash cases. "
-            "Our evaluator, judge dot py, runs two layers of grading. "
-            "Layer one runs deterministic exact checks: verifying headings, links, Explore button labels, "
-            "canvas fill at or below twenty-five percent, row thirty-five blank, text components pin-free, "
-            "panel count, bounding-box IoU at or above point six five, and exact touch-hit coordinates—passing "
-            "nine out of nine checks on xkcd three twenty-seven. "
-            "Layer two scores a five-criterion tactile rubric using Claude Sonnet four point six locally or "
-            "gemini-4-argon in the sandbox. "
-            "Across Steps zero through four, sixteen JUnit five tests in tactile-core, thirteen Playwright "
-            "Chromium tests in bridge, and six offline fixture tests in tier-two all run green."
+            "Every component is tested against seven benchmark sites in test-sites slash cases. "
+            "Our evaluator, judge dot py, runs two layers. Layer one checks deterministic invariants: headings, "
+            "links, Explore button labels, canvas fill at or below twenty-five percent, row thirty-five clear, "
+            "text parts pin-free, panel count, bounding-box IoU at or above point six five, and touch-hit coordinates—"
+            "passing nine of nine checks on xkcd three twenty-seven. Layer two scores a five-criterion rubric with "
+            "Claude Sonnet four point six locally or gemini-4-argon in the sandbox, backed by thirty-five automated "
+            "JUnit, Playwright, and Tier-two tests."
         ),
     ),
     SceneSpec(
@@ -211,13 +185,13 @@ SCENES: List[SceneSpec] = [
         target_duration_s=24,
         uses_omni=None,
         narration=(
-            "Let's be explicit about what is built today versus what comes next. "
+            "Finally, we separate what is built today from what comes next. "
             "Built and verified in this repository today are the physical Monarch Android app on SDK zero point one "
-            "point one three one, the pure-Kotlin tactile-core library, the Playwright-verified DOM bridge across "
-            "seven sites, and the Tier-two Gemini segmenter with SHA-256 disk caching. "
-            "Next on our roadmap: wiring tier-two and bridge directly into android-app behind the BrowserEngine "
-            "interface, adding the companion ContextMenuActivity for Brailliant thumb-key chords and on-device "
-            "KeyBRF export, and extending structured tactile compilation to hard WebGL and slippy-tile maps."
+            "point one three one, tactile-core, the Playwright-verified DOM bridge across seven sites, and the "
+            "Tier-two Gemini segmenter with SHA-256 disk caching. "
+            "Next on the roadmap: wiring tier-two and bridge directly into android-app behind BrowserEngine, "
+            "adding ContextMenuActivity for Brailliant thumb-key chords and KeyBRF export, and extending tactile "
+            "compilation to hard WebGL and slippy-tile maps."
         ),
     ),
 ]
@@ -312,11 +286,14 @@ def run_dry_run() -> int:
 
 
 def ensure_manim_scene_rendered(sc: SceneSpec, force_render: bool = False) -> Path:
+    import os
     mp4_path = MANIM_MEDIA_DIR / "videos" / sc.module_name / "720p24" / f"{sc.class_name}.mp4"
     if mp4_path.exists() and mp4_path.stat().st_size > 10_000 and not force_render:
         return mp4_path
     script_path = ROOT_DIR / "scripts/video/scenes" / f"{sc.module_name}.py"
     print(f"[manim] Rendering {sc.class_name} from {script_path.name}...")
+    env = dict(os.environ)
+    env["PYTHONPATH"] = str(ROOT_DIR)
     subprocess.run(
         [
             "manim",
@@ -330,6 +307,7 @@ def ensure_manim_scene_rendered(sc: SceneSpec, force_render: bool = False) -> Pa
             sc.class_name,
         ],
         check=True,
+        env=env,
     )
     if not mp4_path.exists():
         raise FileNotFoundError(f"Manim failed to produce {mp4_path}")
@@ -359,8 +337,10 @@ def build_full_video(output_mp4: Path, force_render: bool = False) -> Path:
         wav_path = synthesize_scene_narration(sc.scene_id, sc.narration)
 
         vid_dur = get_video_duration(raw_video)
-        aud_dur = get_audio_duration(wav_path)
-        scene_dur = max(vid_dur, aud_dur) + 0.30
+        raw_aud_dur = get_audio_duration(wav_path)
+        tempo = 1.18
+        aud_dur = raw_aud_dur / tempo
+        scene_dur = max(vid_dur, aud_dur) + 0.20
         pad_video_s = max(0.0, scene_dur - vid_dur + 0.25)
 
         muxed_mp4 = scenes_build_dir / f"{idx:02d}_{sc.scene_id}_1080p.mp4"
@@ -377,15 +357,15 @@ def build_full_video(output_mp4: Path, force_render: bool = False) -> Path:
                 "-i",
                 str(wav_path),
                 "-vf",
-                f"scale=1920:1080:flags=lanczos,fps=24,tpad=stop_mode=clone:stop_duration={pad_video_s:.3f}",
+                f"scale=1920:1080:flags=bilinear,fps=24,tpad=stop_mode=clone:stop_duration={pad_video_s:.3f}",
                 "-af",
-                f"apad=whole_dur={scene_dur:.3f}",
+                f"atempo={tempo:.2f},apad=whole_dur={scene_dur:.3f}",
                 "-t",
                 f"{scene_dur:.3f}",
                 "-c:v",
                 "libx264",
                 "-preset",
-                "fast",
+                "ultrafast",
                 "-crf",
                 "20",
                 "-pix_fmt",
@@ -478,9 +458,9 @@ def build_full_video(output_mp4: Path, force_render: bool = False) -> Path:
             "-c:v",
             "libx264",
             "-preset",
-            "fast",
+            "ultrafast",
             "-crf",
-            "21",
+            "22",
             "-pix_fmt",
             "yuv420p",
             "-c:a",
