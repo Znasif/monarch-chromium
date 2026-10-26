@@ -20,8 +20,8 @@ from pathlib import Path
 from typing import Dict, Optional
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-AUDIO_DIR = ROOT_DIR / "docs/video/out/audio"
-TTS_STATE_FILE = ROOT_DIR / "docs/video/out/tts_budget_state.json"
+AUDIO_DIR = Path("/tmp/monarch_video_build/audio")
+TTS_STATE_FILE = Path("/tmp/monarch_video_build/tts_budget_state.json")
 
 GEMINI_TTS_MODEL = "gemini-3.8-flash-tts"
 GEMINI_TTS_VOICE = "Kore"

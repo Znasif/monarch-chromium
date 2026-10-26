@@ -17,8 +17,8 @@ from pathlib import Path
 from typing import Dict
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-OMNI_DIR = ROOT_DIR / "docs/video/out/omni"
-OMNI_STATE_FILE = ROOT_DIR / "docs/video/out/omni_budget_state.json"
+OMNI_DIR = Path("/tmp/monarch_video_build/omni")
+OMNI_STATE_FILE = Path("/tmp/monarch_video_build/omni_budget_state.json")
 
 GEMINI_OMNI_MODEL = "gemini-omni-1.1-flash"
 MAX_OMNI_CALLS = 3
